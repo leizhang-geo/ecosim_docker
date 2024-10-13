@@ -74,7 +74,7 @@ export PATH="${NETCDF_DIR}/bin:$PATH"
 
 - Run and access an ecosim-docker container.
     ```shell
-    docker container run -it ecosim-docker bash
+    docker container run --name=container-ecosim -it ecosim-docker bash
     ```
 
 - We can also run an ecosim-docker container with usage of a bind mount, a directory on the host machine is mounted into the container.
@@ -94,3 +94,41 @@ export PATH="${NETCDF_DIR}/bin:$PATH"
         ```
     
     - Then check model outputs in the folder
+
+## Other useful docker commands
+
+- Start a container
+    ```shell
+    docker start <container_name or container_id>
+    ```
+
+- Enter a running container
+    ```shell
+    docker exec -it <container_name or container_id> /bin/bash
+    
+    docker attach <container_name or container_id>
+    ```
+
+- Check all images
+    ```shell
+    docker images
+
+    docker image ls
+    ```
+
+- Check all containers
+    ```shell
+    docker container ls
+
+    docker ps
+    ```
+
+- Stop and remove a container
+    ```shell
+    docker stop <container_name or container_id>
+    docker rm <container_name or container_id>
+
+    # for all containers
+    docker stop $(docker ps -aq)
+    docker rm $(docker ps -aq)
+    ```
