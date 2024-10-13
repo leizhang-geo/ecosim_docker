@@ -100,3 +100,8 @@ WORKDIR /usr/app/EcoSIM/EcoSIM/
 
 # Build and install EcoSIM
 RUN bash ./build_EcoSIM.sh
+
+# Copy all runtime files to /usr/local/
+WORKDIR /usr/app/EcoSIM/EcoSIM/
+RUN cp -r ./build/*/local/* /usr/local/
+ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"

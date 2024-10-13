@@ -36,7 +36,6 @@ systype=""
 systype="Linux"
 precision="double"
 shared=1
-runtime_dir="/usr/local/"
 ### LZ code edit END   ###
 
 print_help() {
@@ -256,9 +255,3 @@ ln -s $build_path ./local/bin
 if [ "$regression_test" -eq 1 ]; then
   make -C ./regression-tests test --no-print-directory ${MAKEFLAGS} compiler=gnu;
 fi
-
-
-### LZ code edit START ###
-build_runtime_path=$(realpath "${ecosim_build_dir}/local")
-cp -r "${build_runtime_path}/*" "${runtime_dir}"
-### LZ code edit END   ###

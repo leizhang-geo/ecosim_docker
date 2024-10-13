@@ -30,6 +30,7 @@
 ### Set environment variables
 
 ```shell
+export NETCDF_DIR="/opt/dev/netcdf_install"
 export CPPFLAGS "-I${NETCDF_DIR}/include"
 export CFLAGS "-I${NETCDF_DIR}/include"
 # export LDFLAGS "-L${NETCDF_DIR}/lib"
