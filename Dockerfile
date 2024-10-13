@@ -105,3 +105,5 @@ RUN bash ./build_EcoSIM.sh
 WORKDIR /usr/app/EcoSIM/EcoSIM/
 RUN cp -r ./build/*/local/* /usr/local/
 ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
+
+WORKDIR /usr/app/EcoSIM/
