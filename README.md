@@ -68,8 +68,9 @@ export PATH="${NETCDF_DIR}/bin:$PATH"
 
 - Build the docker image.
     ```shell
-    [sudo] docker build --no-cache -t ecosim-docker .
+    [sudo] docker build --platform=linux/arm64 --no-cache -t ecosim-docker .
     ```
+    *Note: ARM64 platform is recommended.*
 
 - Run and access an ecosim-docker container.
     ```shell
