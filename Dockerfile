@@ -19,6 +19,15 @@ RUN apt-get install -y m4
 RUN apt-get install -y net-tools
 RUN apt-get install -y openssh-server
 
+RUN apt-get install -y python3.8 python3.8-dev python3.8-distutils
+RUN ln -s /usr/bin/python3.8 /usr/bin/python
+RUN curl -O https://bootstrap.pypa.io/get-pip.py
+RUN python get-pip.py
+# RUN ln -s /usr/bin/pip3 /usr/bin/pip
+
+RUN pip install fortls
+RUN pip install fprettify
+
 ENV CC=gcc
 ENV FC=gfortran
 ENV CXX=g++
