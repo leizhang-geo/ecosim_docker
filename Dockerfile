@@ -60,10 +60,10 @@ ENV PATH="${NETCDF_DIR}/bin:$PATH"
 
 # Install hdf5
 WORKDIR /usr/app/EcoSIM/3rd-partylibs/
-ENV fn_hdf5="hdf5-1.14.3"
-RUN unzip "${fn_hdf5}.zip"
+ENV fn_hdf5="hdf5-1.12.2"
+RUN tar -xzf "${fn_hdf5}.tar.gz"
 WORKDIR /usr/app/EcoSIM/3rd-partylibs/${fn_hdf5}/
-RUN ./configure --prefix=${NETCDF_DIR} --with-zlib=${NETCDF_DIR} --enable-hl
+RUN ./configure --prefix=${NETCDF_DIR} --with-zlib=${NETCDF_DIR} --enable-hl --enable-fortran --enable-cxx
 RUN make
 RUN make install
 WORKDIR /usr/app/EcoSIM/3rd-partylibs/
@@ -72,9 +72,9 @@ RUN rm -rf ${fn_hdf5}
 # Install netcdf-c
 WORKDIR /usr/app/EcoSIM/3rd-partylibs/
 ENV fn_netcdf_c="netcdf-c-4.7.4"
-RUN unzip "${fn_netcdf_c}.zip"
+RUN tar -xzf "${fn_netcdf_c}.tar.gz"
 WORKDIR /usr/app/EcoSIM/3rd-partylibs/${fn_netcdf_c}/
-RUN CPPFLAGS="-I${NETCDF_DIR}/include" LDFLAGS="-L${NETCDF_DIR}/lib" ./configure --prefix=${NETCDF_DIR} --disable-dap --disable-parallel4 --enable-hdf5 --enable-shared=yes
+RUN CPPFLAGS="-I${NETCDF_DIR}/include" LDFLAGS="-L${NETCDF_DIR}/lib" ./configure --prefix=${NETCDF_DIR} --disable-dap --disable-parallel4 --enable-hdf5 --enable-netcdf-4 --enable-shared=yes
 RUN make
 RUN make install
 WORKDIR /usr/app/EcoSIM/3rd-partylibs/
@@ -87,7 +87,7 @@ ENV LIBS="-L${NETCDF_DIR}/lib -L${NETCDF_DIR}/lib -lnetcdf -lhdf5_hl -lhdf5 -lm 
 # Install netcdf-fortran
 WORKDIR /usr/app/EcoSIM/3rd-partylibs/
 ENV fn_netcdf_fortran="netcdf-fortran-4.5.3"
-RUN unzip "${fn_netcdf_fortran}.zip"
+RUN tar -xzf "${fn_netcdf_fortran}.tar.gz"
 WORKDIR /usr/app/EcoSIM/3rd-partylibs/${fn_netcdf_fortran}/
 # RUN CPPFLAGS="-I${NETCDF_DIR}/include" LDFLAGS="-L${NETCDF_DIR}/lib -L${NETCDF_DIR}/lib -lnetcdf -lhdf5_hl -lhdf5 -lm -lz" ./configure --prefix=${NETCDF_DIR} --enable-shared=yes
 RUN CPPFLAGS="-I${NETCDF_DIR}/include" LIBS="-L${NETCDF_DIR}/lib -L${NETCDF_DIR}/lib -lnetcdf -lhdf5_hl -lhdf5 -lm -ldl -lz" ./configure --prefix=${NETCDF_DIR} --enable-shared=yes

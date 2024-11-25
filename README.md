@@ -48,18 +48,18 @@ export PATH="${NETCDF_DIR}/bin:$PATH"
     wget https://github.com/madler/zlib/releases/download/v1.3.1/zlib131.zip
     ```
 
-- hdf5: **1.14.3**
+- hdf5: **1.12.2**
     ```shell
-    wget https://github.com/HDFGroup/hdf5/releases/download/hdf5-1_14_3/hdf5-1_14_3.zip
+    wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.2/src/hdf5-1.12.2.tar.gz
     ```
 
 - netcdf-c: **4.7.4**
     ```
-    wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.7.4.zip
+    wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.7.4.tar.gz
     ```
 - netcdf-fortran: **4.5.3**
     ```
-    wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.3.zip
+    wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.3.tar.gz
     ```
 
 ## Build EcoSIM
@@ -68,9 +68,9 @@ export PATH="${NETCDF_DIR}/bin:$PATH"
 
 - Build the docker image.
     ```shell
-    [sudo] docker build --platform=linux/arm64 --no-cache -t ecosim-docker .
+    [sudo] docker build --no-cache -t ecosim-docker .
     ```
-    *Note: ARM64 platform is recommended.*
+    *Note: --platform=linux/amd64 or --platform=linux/arm64*
 
 - Run and access an ecosim-docker container.
     ```shell
@@ -132,3 +132,9 @@ export PATH="${NETCDF_DIR}/bin:$PATH"
     docker stop $(docker ps -aq)
     docker rm $(docker ps -aq)
     ```
+
+## Contact
+
+For questions and more details of our study please contact the author: Lei Zhang 张磊 (lei.zhang@lbl.gov)
+
+[https://leizhang-geo.github.io](https://leizhang-geo.github.io)
