@@ -17,11 +17,11 @@
 
 - hdf5:
 
-    ```./configure --prefix=${NETCDF_DIR} --with-zlib=${NETCDF_DIR} --enable-hl [--disable-shared] [--enable-build-mode=debug]```
-
+    ```./configure --prefix=${NETCDF_DIR} --with-zlib=${NETCDF_DIR} --enable-hl --enable-fortran --enable-cxx [--disable-shared] [--enable-build-mode=debug]```
+ 
 - netcdf-c:
 
-    ```CPPFLAGS="-I${NETCDF_DIR}/include" LDFLAGS="-L${NETCDF_DIR}/lib" ./configure --prefix=${NETCDF_DIR} --disable-dap --disable-parallel4 --enable-hdf5 --enable-shared=yes```
+    ```CPPFLAGS="-I${NETCDF_DIR}/include" LDFLAGS="-L${NETCDF_DIR}/lib" ./configure --prefix=${NETCDF_DIR} --disable-dap --disable-parallel4 --enable-hdf5 --enable-netcdf-4 --enable-shared=yes```
 
 - netcdf-fortran:
 
