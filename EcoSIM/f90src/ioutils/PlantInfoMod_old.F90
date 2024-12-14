@@ -144,13 +144,6 @@ implicit none
       DO NY=NV1,NV2
         DO NZ=1,MIN(NS,NP(NY,NX))
           tstr=trim(pft_pltinfo(NZ))
-          
-          ! --- LZ code start ---
-          if (tstr .EQ. "") then
-            tstr = "01010000 0.0 0.0"
-          endif
-          ! --- LZ code end ---
-
           read(tstr,'(I2,I2,I4)')IDX,IMO,IYR
           read(tstr,*)DY,PPI_pft(NZ,NY,NX),PlantinDepz_pft(NZ,NY,NX)
 
@@ -358,28 +351,15 @@ implicit none
   if(pft_dflag==0)then
     ! constant pft data
     if(IGO==0)then
-      iyear=1
+      iyear=1    
       call readplantinginfo(pftinfo_nfid,ntopou,iyear,yearc,NHW,NHE,NVN,NVS)
       call InitPlantMgmnt(NHW,NHE,NVN,NVS)
     elseif(IGO>0)then
       iyear=2
       call readplantmgmtinfo(pftinfo_nfid,ntopou,iyear,yearc,NHW,NHE,NVN,NVS)
     endif
-  !  !transient pft data 
-  ! else
-  !   iyear=1
-  !   DO while(.true.)
-  !     call ncd_getvar(pftinfo_nfid,'year',iyear,year)
-  !     if(year==yeari)exit
-  !     iyear=iyear+1
-  !   ENDDO
-  !   call readplantinginfo(pftinfo_nfid,ntopou,iyear,yearc,NHW,NHE,NVN,NVS)
-  !   call readplantmgmtinfo(pftinfo_nfid,ntopou,iyear,yearc,NHW,NHE,NVN,NVS)
-  ! endif
-  
-  ! --- LZ code start ---
-  elseif(pft_dflag==1)then
-    !transient pft data
+   !transient pft data 
+  else
     iyear=1
     DO while(.true.)
       call ncd_getvar(pftinfo_nfid,'year',iyear,year)
@@ -388,20 +368,7 @@ implicit none
     ENDDO
     call readplantinginfo(pftinfo_nfid,ntopou,iyear,yearc,NHW,NHE,NVN,NVS)
     call readplantmgmtinfo(pftinfo_nfid,ntopou,iyear,yearc,NHW,NHE,NVN,NVS)
-  
-  else
-    !transient pft data (flexible inputs)
-    iyear=1
-    DO while(.true.)
-      call ncd_getvar(pftinfo_nfid,'year',iyear,year)
-      if(year==yearc)exit
-      iyear=iyear+1
-    ENDDO
-    call readplantinginfo(pftinfo_nfid,ntopou,iyear,yearc,NHW,NHE,NVN,NVS)
-    call readplantmgmtinfo(pftinfo_nfid,ntopou,iyear,yearc,NHW,NHE,NVN,NVS)
   endif
-  ! --- LZ code end ---
-
   call ncd_pio_closefile(pftinfo_nfid)
 
   DO NX=NHW,NHE
