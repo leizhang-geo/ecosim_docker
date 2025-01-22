@@ -32,6 +32,12 @@ precision="double"
 prefix=""
 systype=""
 
+### LZ code edit START ###
+systype="Linux"
+precision="double"
+shared=1
+### LZ code edit END   ###
+
 print_help() {
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
