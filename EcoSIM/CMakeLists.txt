@@ -159,6 +159,11 @@ else()
   message(STATUS "ATS_ECOSIM NOT set")
 endif()
 
+### LZ code edit START ###
+set(ATS_ECOSIM TRUE)
+set(TPL_INSTALL_PREFIX $ENV{NETCDF_DIR})
+### LZ code edit END   ###
+
 if (ATS_ECOSIM)
     message(STATUS "Compiling ATS:")
     set(CMAKE_FIND_LIBRARY_SUFFIXES ".so" ".a")
