@@ -17,7 +17,7 @@ Module SharedDataMod
   real(r8), allocatable :: a_csand(:,:)   !sand mass fraction
   real(r8), allocatable :: a_CSILT(:,:)   !silt mass fraction
   real(r8), allocatable :: a_BKDSI(:,:)   !bulk density
-  real(r8), allocatable :: a_CumDepz2LayerBot_vr(:,:)   !dpeth (from surfce to bottom)
+  real(r8), allocatable :: a_CumDepz2LayBottom_vr(:,:)   !dpeth (from surfce to bottom)
   real(r8), allocatable :: a_Volume(:,:)   !volume
   real(r8), allocatable :: a_dz(:,:)      !distance between layers  
   real(r8), allocatable :: a_AreaZ(:,:)   !Area normal to z axis
@@ -39,9 +39,11 @@ Module SharedDataMod
   real(r8), allocatable :: a_RELPERM(:,:) !relative_permeability
   real(r8), allocatable :: a_HCOND(:,:)   !hydraulic conductivity
   real(r8), allocatable :: a_TEMP(:,:)    !temperature
+  real(r8), allocatable :: a_TEMP_pad(:,:)    !temperature
   real(r8), allocatable :: a_SSES(:,:)    !subsurface energy source
   real(r8), allocatable :: a_SSWS(:,:)    !subsurface water source
   real(r8), allocatable :: a_AREA3(:,:) 
+  real(r8), allocatable :: a_AREA3_pad(:,:)
 
   real(r8), allocatable :: tairc(:)       !air temperature oC
   real(r8), allocatable :: uwind(:)       !wind speed, m/s
@@ -52,6 +54,7 @@ Module SharedDataMod
   real(r8), allocatable :: vpair(:)       !vapor pressure deficit
   real(r8), allocatable :: surf_e_source(:) !surface energy source
   real(r8), allocatable :: surf_w_source(:) !surface water source
+  real(r8), allocatable :: surf_snow_depth(:) !snow depth source
   !real(r8), allocatable :: a_AREA3(:)
   integer,  allocatable :: a_NU(:)        !upper soil layer index
   integer,  allocatable :: a_NL(:)        !lower soil layer index
@@ -67,20 +70,20 @@ Module SharedDataMod
     integer, intent(in) :: ncol  !NUMBER of cols
     !set # of soil layers
     !JZSOI=JZs
-    write(*,*) "In Shared data before setting: "
-    write(*,*) "JX=", JX, ", JY=", JY, ", JZ=", JZ
+    write(*,*) "(InitSharedData) JX, JY, JZ, N_cells, N_cols: ", JX, JY, JZ, &
+            ncells_per_col_, ncol
     
     JX=1;JY=ncol
     JZ = ncells_per_col_
    
-    write(*,*) "In Shared data after setting: "
-    write(*,*) "JX=", JX, ", JY=", JY, ", JZ=", JZ
+    !write(*,*) "In Shared data after setting: "
+    !write(*,*) "JX=", JX, ", JY=", JY, ", JZ=", JZ
 
     allocate(a_csand(ncells_per_col_,ncol))
     allocate(a_CSILT(ncells_per_col_,ncol))   !silt mass fraction
     !allocate(a_AreaZ(ncells_per_col_,ncol))   !actually need to allocate area
     !allocate(a_BKDSI(ncells_per_col_,ncol))   !bulk density
-    !allocate(a_CumDepz2LayerBot_vr(ncells_per_col_,ncol))   !dpeth (from surfce to bottom)
+    !allocate(a_CumDepz2LayBottom_vr(ncells_per_col_,ncol))   !dpeth (from surfce to bottom)
     !allocate(a_FC(ncells_per_col_,ncol))      !field capacity
     !allocate(a_WP(ncells_per_col_,ncol))      !wilting point
     allocate(a_FHOL(ncells_per_col_,ncol))    !macropore fraction
@@ -90,8 +93,8 @@ Module SharedDataMod
     allocate(a_CORGP(ncells_per_col_,ncol))   !organic phosphorus content
     !allocate(a_PORO(ncells_per_col_,ncol))
     !allocate(a_AREA3(ncells_per_col_))
-    allocate(a_NU(ncells_per_col_))
-    allocate(a_NL(ncells_per_col_))
+    allocate(a_NU(ncol))
+    allocate(a_NL(ncol))
     !allocate(a_ASP(ncells_per_col_))
     allocate(a_ALT(ncells_per_col_))
     !allocate(tairc(1:ncells_per_col_))
@@ -100,9 +103,44 @@ Module SharedDataMod
     !allocate(sunrad(1:ncells_per_col_))
     !allocate(vpair(1:ncells_per_col_))
     allocate(a_ATKA(1:ncells_per_col_))
+ 
+    !allocate(a_BKDSI(ncells_per_col_, ncol))        ! bulk density
+    !allocate(a_CumDepth2LayerBottom(ncells_per_col_, ncol))  ! depth (from surface to bottom)
+    !allocate(a_Volume(ncells_per_col_, ncol))       ! volume
+    !allocate(a_dz(ncells_per_col_, ncol))           ! distance between layers
+    !allocate(a_AreaZ(ncells_per_col_, ncol))        ! area normal to z-axis
+    !allocate(a_FC(ncells_per_col_, ncol))           ! field capacity
+    !allocate(a_WP(ncells_per_col_, ncol))           ! wilting point
+    !allocate(a_PORO(ncells_per_col_, ncol))         ! porosity
+    !allocate(a_MATP(ncells_per_col_, ncol))         ! matric pressure
+    !allocate(a_WC(ncells_per_col_, ncol))           ! soil water content
+    !allocate(a_LSAT(ncells_per_col_, ncol))         ! liquid saturation
+    !allocate(a_RELPERM(ncells_per_col_, ncol))      ! relative permeability
+    !allocate(a_HCOND(ncells_per_col_, ncol))        ! hydraulic conductivity
+    !allocate(a_TEMP(ncells_per_col_, ncol))         ! temperature
+    !allocate(a_SSES(ncells_per_col_, ncol))         ! subsurface energy source
+    !allocate(a_SSWS(ncells_per_col_, ncol))         ! subsurface water source
+    !allocate(a_AREA3(ncells_per_col_, ncol)) 
+    !allocate(a_AREA3_pad(ncells_per_col_, ncol))
+    !allocate(a_TEMP_pad(ncells_per_col_, ncol))
+
+    !allocate(a_ASP(ncells_per_col_))                ! aspect
+    !allocate(tairc(ncells_per_col_))                ! air temperature
+    !allocate(uwind(ncells_per_col_))                ! wind speed
+    !allocate(p_rain(ncells_per_col_))               ! precipitation (rain)
+    !allocate(p_snow(ncells_per_col_))               ! precipitation (snow)
+    !allocate(sunrad(ncells_per_col_))               ! solar radiation
+    !allocate(swrad(ncells_per_col_))                ! shortwave radiation
+    !allocate(vpair(ncells_per_col_))                ! vapor pressure deficit
+    !allocate(surf_e_source(ncells_per_col_))        ! surface energy source
+    !allocate(surf_w_source(ncells_per_col_))        ! surface water source
+    !allocate(surf_snow_depth(ncells_per_col_))        ! surface snow depth
+
     a_NU=1
     a_NL=ncells_per_col_
 
+    write(*,*) "(InitSharedData f) JX, JY, JZ, N_cells, N_cols: ", JX, JY, JZ, &
+        ncells_per_col_, ncol
   end subroutine InitSharedData
 
 !------------------------------------------------------------------------------------------
@@ -115,7 +153,7 @@ Module SharedDataMod
   call destroy(a_BKDSI)
   call destroy(a_MATP)
   call destroy(a_AreaZ)
-  call destroy(a_CumDepz2LayerBot_vr)
+  call destroy(a_CumDepz2LayBottom_vr)
   call destroy(a_FC)
   call destroy(a_WP)
   call destroy(a_FHOL)
@@ -135,6 +173,8 @@ Module SharedDataMod
   call destroy(swrad)
   call destroy(vpair)
   call destroy(a_ATKA)
+  call destroy(a_AREA3_pad)
+  call destroy(a_TEMP_pad)
   end subroutine DestroySharedData
 
 end module SharedDataMod

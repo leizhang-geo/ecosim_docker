@@ -184,9 +184,9 @@ module readsmod
       D125: DO I=1,366
         RRIG(1:24,I,NY,NX)=0.0_r8
         PHQ(I,NY,NX)=7.0_r8
-        NH4_irrig_conc(I,NY,NX)=0.0_r8
-        NO3_irrig_conc(I,NY,NX)=0.0_r8
-        H2PO4_irrig_conc(I,NY,NX)=0.0_r8
+        NH4_irrig_mole_conc(I,NY,NX)=0.0_r8
+        NO3_irrig_mole_conc(I,NY,NX)=0.0_r8
+        H2PO4_irrig_mole_conc(I,NY,NX)=0.0_r8
 
         WDPTH(I,NY,NX)=0.0_r8
         ROWI(I,NY,NX)=0.0_r8
@@ -197,14 +197,14 @@ module readsmod
     DO NX=NHW,NHE
       DO NY=NVN,NVS
         DO I=1,366
-          trcsalt_irrig_conc(idsalt_Al,I,NY,NX)=0.0_r8
-          trcsalt_irrig_conc(idsalt_Fe,I,NY,NX)=0.0_r8
-          trcsalt_irrig_conc(idsalt_Ca,I,NY,NX)=0.0_r8
-          trcsalt_irrig_conc(idsalt_Mg,I,NY,NX)=0.0_r8
-          trcsalt_irrig_conc(idsalt_Na,I,NY,NX)=0.0_r8
-          trcsalt_irrig_conc(idsalt_K,I,NY,NX)=0.0_r8
-          trcsalt_irrig_conc(idsalt_SO4,I,NY,NX)=0.0_r8
-          trcsalt_irrig_conc(idsalt_Cl,I,NY,NX)=0.0_r8  
+          trcsalt_irrig_mole_conc_col(idsalt_Al,I,NY,NX)=0.0_r8
+          trcsalt_irrig_mole_conc_col(idsalt_Fe,I,NY,NX)=0.0_r8
+          trcsalt_irrig_mole_conc_col(idsalt_Ca,I,NY,NX)=0.0_r8
+          trcsalt_irrig_mole_conc_col(idsalt_Mg,I,NY,NX)=0.0_r8
+          trcsalt_irrig_mole_conc_col(idsalt_Na,I,NY,NX)=0.0_r8
+          trcsalt_irrig_mole_conc_col(idsalt_K,I,NY,NX)=0.0_r8
+          trcsalt_irrig_mole_conc_col(idsalt_SO4,I,NY,NX)=0.0_r8
+          trcsalt_irrig_mole_conc_col(idsalt_Cl,I,NY,NX)=0.0_r8  
         ENDDO
       ENDDO  
     ENDDO   
@@ -326,9 +326,9 @@ module readsmod
       PHR(NY,NX)=PHRG
       CN4RI(NY,NX)=CN4RIG
       CNORI(NY,NX)=CNORIG
-      NH4_rain_conc(NY,NX)=CN4RIG
-      NO3_rain_conc(NY,NX)=CNORIG
-      H2PO4_rain_conc(NY,NX)=CPORG
+      NH4_rain_mole_conc(NY,NX)=CN4RIG
+      NO3_rain_mole_conc(NY,NX)=CNORIG
+      H2PO4_rain_mole_conc(NY,NX)=CPORG
 
     ENDDO D8975
   ENDDO D8970
@@ -336,14 +336,14 @@ module readsmod
   if(salt_model)then
     DO NX=NHW,NHE
       DO NY=NVN,NVS
-        trcsalt_rain_conc(idsalt_Al,NY,NX)=CALRG
-        trcsalt_rain_conc(idsalt_Fe,NY,NX)=CFERG
-        trcsalt_rain_conc(idsalt_Ca,NY,NX)=CCARG
-        trcsalt_rain_conc(idsalt_Mg,NY,NX)=CMGRG
-        trcsalt_rain_conc(idsalt_Na,NY,NX)=CNARG
-        trcsalt_rain_conc(idsalt_K,NY,NX)=CKARG
-        trcsalt_rain_conc(idsalt_SO4,NY,NX)=CSORG
-        trcsalt_rain_conc(idsalt_Cl,NY,NX)=CCLRG  
+        trcsalt_rain_mole_conc_col(idsalt_Al,NY,NX)=CALRG
+        trcsalt_rain_mole_conc_col(idsalt_Fe,NY,NX)=CFERG
+        trcsalt_rain_mole_conc_col(idsalt_Ca,NY,NX)=CCARG
+        trcsalt_rain_mole_conc_col(idsalt_Mg,NY,NX)=CMGRG
+        trcsalt_rain_mole_conc_col(idsalt_Na,NY,NX)=CNARG
+        trcsalt_rain_mole_conc_col(idsalt_K,NY,NX)=CKARG
+        trcsalt_rain_mole_conc_col(idsalt_SO4,NY,NX)=CSORG
+        trcsalt_rain_mole_conc_col(idsalt_Cl,NY,NX)=CCLRG  
       ENDDO
     ENDDO    
   endif

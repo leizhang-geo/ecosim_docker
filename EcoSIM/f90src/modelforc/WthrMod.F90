@@ -2,10 +2,14 @@ module WthrMod
   !
   ! Description:
   ! code to process the weather forcing
-  use data_kind_mod, only : r8 => DAT_KIND_R8
-  use MiniMathMod  , only : safe_adb,vapsat0,isclose
-  use MiniFuncMod  , only : get_sun_declin
-  use EcoSIMCtrlMod, only : etimer,frectyp
+  use data_kind_mod,     only: r8 => DAT_KIND_R8
+  use MiniMathMod,       only: safe_adb, vapsat0, isclose
+  use MiniFuncMod,       only: get_sun_declin
+  use EcoSIMCtrlMod,     only: etimer, frectyp
+  use PlantMgmtDataType, only: NP
+  use MiniMathMod,       only: AZMAX1
+  use UnitMod,           only: units
+  use DebugToolMod  
   use EcosimConst
   use CanopyRadDataType
   use GridConsts
@@ -18,9 +22,8 @@ module WthrMod
   use AqueChemDatatype
   use IrrigationDataType
   use GridDataType
+  use SoilWaterDataType
   use EcoSIMConfig
-  use MiniMathMod, only : AZMAX1
-  use UnitMod    , only : units
   implicit none
 
   private
@@ -54,6 +57,8 @@ module WthrMod
   implicit none
   integer, intent(in) :: I, J
   integer, intent(in) :: NHW,NHE,NVN,NVS
+
+  character(len=*), parameter :: subname='WTHR'
   integer :: ITYPE,NX,NY,N,NZ,mon
   real(r8) :: PrecAsRain_col(JY,JX)
   real(r8) :: PrecAsSnow_col(JY,JX)
@@ -63,7 +68,7 @@ module WthrMod
   real(r8) :: VPS(JY,JX)
 
   !     execution begins here
-
+  call PrintInfo('beg '//subname)
   XJ=J
   DOY=I-1+XJ/24
   !
@@ -104,13 +109,13 @@ module WthrMod
     DO NY=NVN,NVS
       CO2EI(NY,NX)=atm_co2_mon(mon)
       CH4E_col(NY,NX) =atm_ch4_mon(mon)*1.e-3_r8  !ppb to ppm
-      Z2OE(NY,NX) =atm_n2o_mon(mon)*1.e-3_r8  !ppb to ppm
+      Z2OE_col(NY,NX) =atm_n2o_mon(mon)*1.e-3_r8  !ppb to ppm
       CO2E_col(NY,NX)=CO2EI(NY,NX)   !used in photosynthesis, soil CO2 transport
     ENDDO
   ENDDO
 
   call SummaryClimateForc(I,J,NHW,NHE,NVN,NVS,PRECUI_col,PrecAsRain_col,PRECII_col,PrecAsSnow_col)
-
+  call PrintInfo('end '//subname)
   END subroutine wthr
 !------------------------------------------------------------------------------------------
 
@@ -219,7 +224,7 @@ module WthrMod
   real(r8), intent(out) :: VPS(JY,JX)
   integer :: NY,NX
   !     begin_execution
-  
+
   DO  NX=NHW,NHE
     DO NY=NVN,NVS
  !
@@ -241,11 +246,11 @@ module WthrMod
       PBOT_col(NY,NX)         = PBOT_hrly(J,I)
       !snowfall is determined by air tempeature
       IF(TCA_col(NY,NX).GT.TSNOW)THEN
-        PrecAsRain_col(NY,NX)=RAINH(J,I)
-        PrecAsSnow_col(NY,NX)=0.0_r8
+        PrecAsRain_col(NY,NX) = RAINH(J,I)
+        PrecAsSnow_col(NY,NX) = 0.0_r8
       ELSE
-        PrecAsRain_col(NY,NX)=0.0_r8
-        PrecAsSnow_col(NY,NX)=RAINH(J,I)
+        PrecAsRain_col(NY,NX) = 0.0_r8
+        PrecAsSnow_col(NY,NX) = RAINH(J,I)
       ENDIF
     enddo
   enddo
@@ -373,10 +378,10 @@ module WthrMod
       !     PRECII_col,PRECUI=surface,subsurface irrigation
       !     RRIG=irrigation from soil management file in reads.f
       !
-!      WDPTHD=WDPTH(I,NY,NX)+CumDepz2LayerBot_vr(NU(NY,NX)-1,NY,NX)
-!      IF(WDPTHD.LE.CumDepz2LayerBot_vr(NU(NY,NX),NY,NX))THEN
-        PRECII_col(NY,NX)=RRIG(J,I,NY,NX)   !surface irrigation
-        PRECUI_col(NY,NX)=0.0_r8
+!      WDPTHD=WDPTH(I,NY,NX)+CumDepz2LayBottom_vr(NU(NY,NX)-1,NY,NX)
+!      IF(WDPTHD.LE.CumDepz2LayBottom_vr(NU(NY,NX),NY,NX))THEN
+        PRECII_col(NY,NX) = RRIG(J,I,NY,NX)   !surface irrigation
+        PRECUI_col(NY,NX) = 0.0_r8
 !      ELSE
 !        PRECII_col(NY,NX)=0.0_r8
 !        PRECUI_col(NY,NX)=RRIG(J,I,NY,NX)   !subsurface irrigation
@@ -515,12 +520,12 @@ module WthrMod
       RadPARDiffus_col(NY,NX) = RadPARDiffus_col(NY,NX)*TDRAD(N,NY,NX)
       WindSpeedAtm_col(NY,NX) = WindSpeedAtm_col(NY,NX)*TDWND(N,NY,NX)
       VPK_col(NY,NX)          = AMIN1(VPS(NY,NX),VPK_col(NY,NX)*TDHUM(N,NY,NX))
-      PrecAsRain_col(NY,NX)       = PrecAsRain_col(NY,NX)*TDPRC(N,NY,NX)
-      PrecAsSnow_col(NY,NX)       = PrecAsSnow_col(NY,NX)*TDPRC(N,NY,NX)
+      PrecAsRain_col(NY,NX)   = PrecAsRain_col(NY,NX)*TDPRC(N,NY,NX)
+      PrecAsSnow_col(NY,NX)   = PrecAsSnow_col(NY,NX)*TDPRC(N,NY,NX)
       PRECII_col(NY,NX)       = PRECII_col(NY,NX)*TDIRI(N,NY,NX)
       PRECUI_col(NY,NX)       = PRECUI_col(NY,NX)*TDIRI(N,NY,NX)
-      NH4_rain_conc(NY,NX)    = CN4RI(NY,NX)*TDCN4(N,NY,NX)
-      NO3_rain_conc(NY,NX)    = CNORI(NY,NX)*TDCNO(N,NY,NX)
+      NH4_rain_mole_conc(NY,NX)    = CN4RI(NY,NX)*TDCN4(N,NY,NX)
+      NO3_rain_mole_conc(NY,NX)    = CNORI(NY,NX)*TDCNO(N,NY,NX)
     ENDDO D9920
   ENDDO D9925
   end subroutine CorrectClimate
@@ -546,10 +551,10 @@ module WthrMod
         RadSWDirect_col(NY,NX)*SineSunInclAngle_col(NY,NX)+RadSWDiffus_col(NY,NX)*TotSineSkyAngles_grd
       TAMX(NY,NX)  = AMAX1(TAMX(NY,NX),TCA_col(NY,NX))          !celcius
       TAMN(NY,NX)  = AMIN1(TAMN(NY,NX),TCA_col(NY,NX))          !celcius
-      HUDX(NY,NX)  = AMAX1(HUDX(NY,NX),VPK_col(NY,NX))          !maximum humidity,                     vapor pressure, KPa
-      HUDN(NY,NX)  = AMIN1(HUDN(NY,NX),VPK_col(NY,NX))          !minimum humidity,                     vapor pressure, KPa
-      TWIND(NY,NX) = TWIND(NY,NX)+WindSpeedAtm_col(NY,NX)      !wind speed,                            m/hr
-      VPA(NY,NX)   = VPK_col(NY,NX)*2.173E-03_r8/TairK_col(NY,NX)    !atmospheric vapor concentration, [m3 m-3],       2.173E-03_r8 = 18g/mol/(8.3142)
+      HUDX(NY,NX)  = AMAX1(HUDX(NY,NX),VPK_col(NY,NX))          !maximum humidity, vapor pressure, [KPa]
+      HUDN(NY,NX)  = AMIN1(HUDN(NY,NX),VPK_col(NY,NX))          !minimum humidity, vapor pressure, [KPa]
+      TWIND(NY,NX) = TWIND(NY,NX)+WindSpeedAtm_col(NY,NX)       !wind speed, [m/hr]
+      VPA_col(NY,NX)   = VPK_col(NY,NX)*2.173E-03_r8/TairK_col(NY,NX)    !atmospheric vapor concentration, [m3 m-3],       2.173E-03_r8 = 18g/mol/(8.3142)
 !
       !     WATER AND HEAT INPUTS TO GRID CELLS
       !
@@ -564,10 +569,11 @@ module WthrMod
       SnoFalPrec_col(NY,NX)       = PrecAsSnow_col(NY,NX)*AREA(3,NU(NY,NX),NY,NX)
       IrrigSurface_col(NY,NX)     = PRECII_col(NY,NX)*AREA(3,NU(NY,NX),NY,NX)
       IrrigSubsurf_col(NY,NX)     = PRECUI_col(NY,NX)*AREA(3,NU(NY,NX),NY,NX)
+      Irrigation_col(NY,NX)       = IrrigSurface_col(NY,NX)+IrrigSubsurf_col(NY,NX)
       PrecRainAndIrrig_col(NY,NX) = RainFalPrec_col(NY,NX)+IrrigSurface_col(NY,NX)
       PrecAtm_col(NY,NX)          = RainFalPrec_col(NY,NX)+SnoFalPrec_col(NY,NX)
       LWRadSky_col(NY,NX)         = SkyLonwRad_col(NY,NX)*AREA(3,NU(NY,NX),NY,NX)
-
+      PrecipAtm2LandSurf_col(NY,NX)=RainFalPrec_col(NY,NX)+SnoFalPrec_col(NY,NX)+IrrigSurface_col(NY,NX)
     ENDDO
   ENDDO
   end subroutine SummaryClimateForc

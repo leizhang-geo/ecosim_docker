@@ -83,7 +83,7 @@ module PlantPhenolMod
         call FindMainBranchNumber(NZ)
 
         !   if(I>176)print*,'stageplant'
-        call stage_plant_phenology(I,J,NZ)
+        call StagePlantPhenology(I,J,NZ)
 
         !   if(I>176)print*,'testplantem'
         call TestPlantEmergence(I,J,NZ)
@@ -272,7 +272,7 @@ module PlantPhenolMod
     NumRootAxes_pft            => plt_morph%NumRootAxes_pft,            &
     MainBranchNum_pft          => plt_morph%MainBranchNum_pft,          &
     NumOfBranches_pft          => plt_morph%NumOfBranches_pft,          &
-    NumCogrothNode_pft         => plt_morph%NumCogrothNode_pft,         &
+    NumCogrowthNode_pft         => plt_morph%NumCogrowthNode_pft,         &
     BranchNumber_pft           => plt_morph%BranchNumber_pft,           &
     BranchNumber_brch          => plt_morph%BranchNumber_brch,          &
     NGTopRootLayer_pft         => plt_morph%NGTopRootLayer_pft,         &
@@ -294,7 +294,7 @@ module PlantPhenolMod
 ! iPlantBranchState_brch=branch life flag:0=living,1=dead
 ! PSTG=node number
 ! FracGroth2Node_pft=scales node number for perennial vegetation (e.g. trees)
-! NumCogrothNode_pft=number of concurrently growing nodes
+! NumCogrowthNode_pft=number of concurrently growing nodes
 ! ShootNodeNumAtPlanting_pft,GROUP=node number at planting,floral initiation
 ! IBTYP: setup for phenologically-driven above-ground turnover
 
@@ -313,7 +313,7 @@ module PlantPhenolMod
             D120: DO NB=1,MaxNumBranches
               IF(iPlantBranchState_brch(NB,NZ).EQ.iDead)THEN
                 IF(NB.EQ.MainBranchNum_pft(NZ) .OR. ShootNodeNum_brch(MainBranchNum_pft(NZ),NZ) &
-                  .GT.BranchNumber_pft(NZ)+NumCogrothNode_pft(NZ)/FracGroth2Node_pft(NZ)+ShootNodeNumAtPlanting_pft(NZ))THEN
+                  .GT.BranchNumber_pft(NZ)+NumCogrowthNode_pft(NZ)/FracGroth2Node_pft(NZ)+ShootNodeNumAtPlanting_pft(NZ))THEN
                   !initiate a new branch
                   BranchNumber_pft(NZ)          = BranchNumber_pft(NZ)+1
                   NumOfBranches_pft(NZ)         = MIN(BranchNumMax(iPlantTurnoverPattern_pft(NZ)),MAX(NB,NumOfBranches_pft(NZ)))
@@ -391,7 +391,7 @@ module PlantPhenolMod
   end associate
   end subroutine FindMainBranchNumber
 !------------------------------------------------------------------------------------------
-  subroutine stage_plant_phenology(I,J,NZ)
+  subroutine StagePlantPhenology(I,J,NZ)
   implicit none
   integer, intent(in) :: I,J,NZ
 
@@ -407,7 +407,7 @@ module PlantPhenolMod
     CanopyNodulNonstElms_brch => plt_biom%CanopyNodulNonstElms_brch, &
     RootMycoNonstElms_rpvr    => plt_biom%RootMycoNonstElms_rpvr,    &
     CanopyNonstElms_brch      => plt_biom%CanopyNonstElms_brch,      &
-    RootNonstructElmConc_rpvr  => plt_biom%RootNonstructElmConc_rpvr,  &
+    RootNonstructElmConc_rpvr => plt_biom%RootNonstructElmConc_rpvr, &
     ZERO4LeafVar_pft          => plt_biom%ZERO4LeafVar_pft,          &
     ZERO4Groth_pft            => plt_biom%ZERO4Groth_pft,            &
     RootMycoActiveBiomC_pvr   => plt_biom%RootMycoActiveBiomC_pvr,   &
@@ -420,7 +420,7 @@ module PlantPhenolMod
     NumOfBranches_pft         => plt_morph%NumOfBranches_pft,        &
     MaxSoiL4Root_pft          => plt_morph%MaxSoiL4Root_pft          &
   )
-  plt_bgcr%RootGasLossDisturb_pft(idg_beg:idg_end-1,NZ)=0.0_r8
+  plt_bgcr%RootGasLossDisturb_pft(idg_beg:idg_NH3,NZ)=0.0_r8
   CanopyNonstElms_pft(1:NumPlantChemElms,NZ)=0.0_r8
   MaxSoiL4Root_pft(NZ)=NIXBotRootLayer_pft(NZ)
   NGTopRootLayer_pft(NZ)=MIN(MaxSoiL4Root_pft(NZ),MAX(NGTopRootLayer_pft(NZ),NU))
@@ -489,7 +489,7 @@ module PlantPhenolMod
   ENDDO D190
 
   end associate
-  end subroutine stage_plant_phenology
+  end subroutine StagePlantPhenology
 !------------------------------------------------------------------------------------------
   subroutine TestPlantEmergence(I,J,NZ)
   implicit none
@@ -502,10 +502,10 @@ module PlantPhenolMod
     CanopyLeafArea_pft  => plt_morph%CanopyLeafArea_pft, &
     ShootStrutElms_pft  => plt_biom%ShootStrutElms_pft,  &
     HypoctoHeight_pft   => plt_morph%HypoctoHeight_pft,  &
-    VHeatCapCanP_pft    => plt_ew%VHeatCapCanP_pft,      &
+    VHeatCapCanopy_pft  => plt_ew%VHeatCapCanopy_pft,    &
     Root1stDepz_pft     => plt_morph%Root1stDepz_pft,    &
     ZERO4LeafVar_pft    => plt_biom%ZERO4LeafVar_pft,    &
-    WatByPCanopy_pft    => plt_ew%WatByPCanopy_pft,      &
+    WatHeldOnCanopy_pft => plt_ew%WatHeldOnCanopy_pft,   &
     CanopyStemArea_pft  => plt_morph%CanopyStemArea_pft, &
     SeedDepth_pft       => plt_morph%SeedDepth_pft,      &
     iPlantCalendar_brch => plt_pheno%iPlantCalendar_brch &
@@ -518,17 +518,16 @@ module PlantPhenolMod
 ! HypoctoHeight_pft=hypocotyledon height
 ! SeedDepth_pft=seeding depth
 ! Root1stDepz_pft=primary root depth
-! VHeatCapCanP_pft,WTSHT,WatByPCanopy_pft=canopy heat capacity,mass,water content
+! VHeatCapCanopy_pft,WTSHT,WatHeldOnCanopy_pft=canopy heat capacity,mass,water content
 !
-  ShootArea=0._r8
+  
   IF(iPlantCalendar_brch(ipltcal_Emerge,MainBranchNum_pft(NZ),NZ).EQ.0)THEN
     ShootArea = CanopyLeafArea_pft(NZ)+CanopyStemArea_pft(NZ)
     CanopyChk = (HypoctoHeight_pft(NZ).GT.SeedDepth_pft(NZ)).AND.(ShootArea.GT.ZERO4LeafVar_pft(NZ))
     RootChk   = Root1stDepz_pft(ipltroot,1,NZ).GT.(SeedDepth_pft(NZ)+ppmc)
-!    write(121,*)I+J/24.,CanopyChk, RootChk,HypoctoHeight_pft(NZ),CanopyLeafArea_pft(NZ),CanopyStemArea_pft(NZ),SeedDepth_pft(NZ),ZERO4LeafVar_pft(NZ)
     IF(CanopyChk .AND. RootChk)THEN
       iPlantCalendar_brch(ipltcal_Emerge,MainBranchNum_pft(NZ),NZ)=I
-      VHeatCapCanP_pft(NZ)=cpw*(ShootStrutElms_pft(ielmc,NZ)*10.0E-06_r8+WatByPCanopy_pft(NZ))
+      VHeatCapCanopy_pft(NZ)=cpw*(ShootStrutElms_pft(ielmc,NZ)*10.0E-06_r8+WatHeldOnCanopy_pft(NZ))
     ENDIF
   ENDIF
   end associate

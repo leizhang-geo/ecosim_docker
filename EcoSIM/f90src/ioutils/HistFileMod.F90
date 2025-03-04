@@ -12,6 +12,7 @@ module HistFileMod
   use EcosimConst       , only : secspday
   use EcoSIMCtrlMod     , only : etimer
   use EcoSIMConfig      , only : case_name,hostname,version,source,username
+  use DebugToolMod
 implicit none
   save
   private
@@ -1265,6 +1266,7 @@ implicit none
     !
     ! !USES:
     use GridConsts, only : bounds_type
+    use EcoSIMCtrlMod, only: lverb    
     implicit none
     !
     ! !ARGUMENTS:
@@ -1287,9 +1289,9 @@ implicit none
     real(r8), pointer :: field(:)       ! clm 1d pointer field
     logical , pointer :: active(:)      ! flag saying whether each point is active (used for type1d = landunit/column/pft) (this refers to a point being active, NOT a history field being active)
     real(r8) :: field_gcell(bounds%begg:bounds%endg)  ! gricell level field (used if mapping to gridcell is done)
-    integer j
+    integer :: j
     character(len=*),parameter :: subname = 'hist_update_hbuf_field_1d'
-    integer k_offset                    ! offset for mapping sliced subarray pointers when outputting variables in PFT/col vector form
+    integer :: k_offset                    ! offset for mapping sliced subarray pointers when outputting variables in PFT/col vector form
     !-----------------------------------------------------------------------
 
     avgflag        =  tape(t)%hlist(f)%avgflag
@@ -1301,11 +1303,9 @@ implicit none
     type1d_out     =  tape(t)%hlist(f)%field%type1d_out
     hpindex        =  tape(t)%hlist(f)%field%hpindex
     field          => esmptr_rs(hpindex)%ptr
-
+    call PrintInfo('beg '//subname)
+    if(lverb)print*,tape(t)%hlist(f)%field%name
     ! set variables to check weights when allocate all pfts
-
-
-
 
        ! For data defined on the pft, col, and landunit we need to check if a point is active
        ! to determine whether that point should be assigned spval
@@ -1407,7 +1407,7 @@ implicit none
           write(iulog,*) trim(subname),' ERROR: invalid time averaging flag ', avgflag
           call endrun(msg=errMsg(__FILE__, __LINE__))
        end select
-
+  call PrintInfo('end '//subname)
   end subroutine hist_update_hbuf_field_1d
   !-----------------------------------------------------------------------
   subroutine hist_update_hbuf_field_2d (t, f, bounds, num2d)
@@ -1459,6 +1459,7 @@ implicit none
     no_snow_behavior    =  tape(t)%hlist(f)%field%no_snow_behavior
     hpindex             =  tape(t)%hlist(f)%field%hpindex
 
+    call PrintInfo('beg '//subname)
 !    if (no_snow_behavior /= no_snow_unset) then
        ! For multi-layer snow fields, build a special output variable that handles
        ! missing snow layers appropriately
@@ -1597,7 +1598,7 @@ implicit none
     if (field_allocated) then
        deallocate(field)
     end if
-
+  call PrintInfo('end '//subname)
   end subroutine hist_update_hbuf_field_2d
 
   !-----------------------------------------------------------------------
@@ -1663,8 +1664,9 @@ implicit none
     character(len=*),parameter :: subname = trim(mod_filename)//'::hist_htapes_wrapup'
     !-----------------------------------------------------------------------
 
+    call PrintInfo('beg '//subname)
     ! get current step
-
+    
     nstep = etimer%get_nstep()
 
     ! Set calendar for current time step
@@ -1824,7 +1826,7 @@ implicit none
           tape(t)%ntimes = 0
        end if
     end do
-
+  call PrintInfo('end '//subname)
   end subroutine hist_htapes_wrapup
 
   !-----------------------------------------------------------------------
@@ -1904,6 +1906,7 @@ implicit none
 !-----------------------------------------------------------------------
     ! Write/define 1d topological info
 
+    call PrintInfo('beg '//subname)
 !    if (mode == 'define') then
 !      call hfields_1dinfo(t, mode='define')
 !    else if (mode == 'write') then
@@ -1929,7 +1932,7 @@ implicit none
        numdims    = tape(t)%hlist(f)%field%numdims
        num2d      = tape(t)%hlist(f)%field%num2d
        nt         = tape(t)%ntimes
-
+       
        if (mode == 'define') then
 
           select case (avgflag)
@@ -2010,7 +2013,7 @@ implicit none
        end if
 
    end do
-
+   call PrintInfo('end '//subname//' '//mode)
   end subroutine hfields_write
 
   !------------------------------------------------------------------------

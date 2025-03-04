@@ -306,15 +306,15 @@ module SoilDisturbMod
 !     REMOVE FERTILIZER IN RESIDUE
 !
         IF(iSoilDisturbType_col(I,NY,NX).EQ.21)THEN
-          OMelm(ielmn)=OMelm(ielmn)+DCORPC*(trc_solml_vr(ids_NH4,L,NY,NX)+trc_solml_vr(idg_NH3,L,NY,NX) &
-            +trc_solml_vr(ids_NO3,L,NY,NX)+trc_solml_vr(ids_NO2,L,NY,NX))
-          OMelm(ielmp)=OMelm(ielmp)+DCORPC*(trc_solml_vr(ids_H1PO4,L,NY,NX)+trc_solml_vr(ids_H2PO4,L,NY,NX))
+          OMelm(ielmn)=OMelm(ielmn)+DCORPC*(trcs_solml_vr(ids_NH4,L,NY,NX)+trcs_solml_vr(idg_NH3,L,NY,NX) &
+            +trcs_solml_vr(ids_NO3,L,NY,NX)+trcs_solml_vr(ids_NO2,L,NY,NX))
+          OMelm(ielmp)=OMelm(ielmp)+DCORPC*(trcs_solml_vr(ids_H1PO4,L,NY,NX)+trcs_solml_vr(ids_H2PO4,L,NY,NX))
           
           DCORPC1=1.0_r8-DCORPC
 
-          trc_solml_vr(idg_NH3,L,NY,NX)=DCORPC1*trc_solml_vr(idg_NH3,L,NY,NX)
+          trcs_solml_vr(idg_NH3,L,NY,NX)=DCORPC1*trcs_solml_vr(idg_NH3,L,NY,NX)
           do ids=ids_nut_beg,ids_nuts_end
-            trc_solml_vr(ids,L,NY,NX)=DCORPC1*trc_solml_vr(ids,L,NY,NX)
+            trcs_solml_vr(ids,L,NY,NX)=DCORPC1*trcs_solml_vr(ids,L,NY,NX)
           enddo
           trcx_solml_vr(idx_NH4,L,NY,NX)  =DCORPC1*trcx_solml_vr(idx_NH4,L,NY,NX)
           trcp_saltpml_vr(idsp_AlPO4,L,NY,NX)    = DCORPC1*trcp_saltpml_vr(idsp_AlPO4,L,NY,NX)
@@ -350,8 +350,8 @@ module SoilDisturbMod
           
           Eco_NBP_CumYr_col(NY,NX)=Eco_NBP_CumYr_col(NY,NX)-OMelm(ielmc)
         ELSEIF(iSoilDisturbType_col(I,NY,NX).EQ.22)THEN
-          SurfGas_CO2_lnd=SurfGas_CO2_lnd-OMelm(ielmc)
-          SurfGas_O2_lnd=SurfGas_O2_lnd+2.667_r8*OMelm(ielmc)
+          SurfGas_lnd(idg_CO2)=SurfGas_lnd(idg_CO2)-OMelm(ielmc)
+          SurfGas_lnd(idg_O2)=SurfGas_lnd(idg_O2)+2.667_r8*OMelm(ielmc)
           OXYGOU=OXYGOU+2.667_r8*OMelm(ielmc)
 
           TOMOU_lnds(ielmn)=TOMOU_lnds(ielmn)+OMelm(ielmn)

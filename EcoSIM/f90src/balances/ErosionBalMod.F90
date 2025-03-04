@@ -1,8 +1,10 @@
 module ErosionBalMod
-  use data_kind_mod, only : r8 => DAT_KIND_R8
+  use data_kind_mod,    only: r8 => DAT_KIND_R8
+  use EcoSIMConfig,     only: nlbiomcp=>NumLiveMicrbCompts
+  use EcoSiMParDataMod, only: micpar
   use SoilPropertyDataType
   use RootDataType
-  use EcoSiMParDataMod, only : micpar
+  use DebugToolMod
   USE EcoSIMCtrlDataType
   use EcoSIMCtrlMod
   use MicrobialDataType
@@ -12,22 +14,23 @@ module ErosionBalMod
   USE AqueChemDatatype
   use FlagDataType
   use FertilizerDataType
-  use EcoSIMConfig, only : nlbiomcp=>NumLiveMicrbCompts
   use TFlxTypeMod
 implicit none
   private
   character(len=*), parameter :: mod_filename = &
   __FILE__
-  public :: SinkChemicals
+  public :: SinkSediments
   public :: ZeroErosionArray
   contains
 
 !------------------------------------------------------------------------------------------
 
-  subroutine SinkChemicals(NY,NX)
+  subroutine SinkSediments(NY,NX)
+  
+  !Sedimentation
   implicit none
   integer, intent(in) :: NY,NX
-
+  character(len=*), parameter :: subname = 'SinkSediments'
   integer :: L,LL,M,N,K,NGL,MID,idom,NE
   real(r8) :: FSINK,FSAN,FSIL,FCLA,FCEC,FAEC
   real(r8) :: FNX
@@ -44,14 +47,15 @@ implicit none
 ! VLS=hourly sinking rate from hour1.f
 ! FSINK=hourly rate for sediment sinking
 !
+  call PrintInfo('beg '//subname)
   D9885: DO L=NL(NY,NX)-1,1,-1
-    IF(SoiBulkDensity_vr(L,NY,NX).LE.ZERO.AND.DLYR(3,L,NY,NX).GT.ZERO)THEN
+    IF(SoilBulkDensity_vr(L,NY,NX).LE.ZERO.AND.DLYR_3D(3,L,NY,NX).GT.ZERO)THEN
       !sinking from water to sediment layer
       D9880: DO LL=L+1,NL(NY,NX)
-        IF(DLYR(3,LL,NY,NX).GT.ZEROS(NY,NX))exit
+        IF(DLYR_3D(3,LL,NY,NX).GT.ZEROS(NY,NX))exit
       ENDDO D9880
 
-      FSINK=AMIN1(1.0_r8,VLS(NY,NX)/DLYR(3,L,NY,NX))
+      FSINK=AMIN1(1.0_r8,VLS_col(NY,NX)/DLYR_3D(3,L,NY,NX))
 !
 !     SOIL MINERALS
 !
@@ -193,7 +197,9 @@ implicit none
       ENDDO D1900
     ENDIF
   ENDDO D9885
-  end subroutine SinkChemicals
+
+  call PrintInfo('end '//subname)
+  end subroutine SinkSediments
 !------------------------------------------------------------------------------------------
 
   subroutine ZeroErosionArray(NY,NX)
@@ -201,29 +207,29 @@ implicit none
   integer, intent(in) :: NY,NX
 
   IF(iErosionMode.EQ.ieros_frzthaweros.OR.iErosionMode.EQ.ieros_frzthawsomeros)THEN
-    tErosionSedmLoss(NY,NX)   = 0.0_r8
-    TSANER(NY,NX)             = 0.0_r8
-    TSILER(NY,NX)             = 0.0_r8
-    TCLAER(NY,NX)             = 0.0_r8
-    TNH4Eros_col(NY,NX)       = 0.0_r8
-    TNH3Eros_col(NY,NX)       = 0.0_r8
-    TNUreaEros_col(NY,NX)     = 0.0_r8
-    TNO3Eros_col(NY,NX)       = 0.0_r8
-    TNH4ErosBand_col(NY,NX)   = 0.0_r8
-    TNH3ErosBand_col(NY,NX)   = 0.0_r8
-    TNUreaErosBand_col(NY,NX) = 0.0_r8
-    TNO3ErosBand_col(NY,NX)   = 0.0_r8
+    tErosionSedmLoss_col(NY,NX) = 0.0_r8
+    TSandEros_col(NY,NX)        = 0.0_r8
+    TSiltEros_col(NY,NX)        = 0.0_r8
+    TCLAYEros_col(NY,NX)        = 0.0_r8
+    TNH4Eros_col(NY,NX)         = 0.0_r8
+    TNH3Eros_col(NY,NX)         = 0.0_r8
+    TNUreaEros_col(NY,NX)       = 0.0_r8
+    TNO3Eros_col(NY,NX)         = 0.0_r8
+    TNH4ErosBand_col(NY,NX)     = 0.0_r8
+    TNH3ErosBand_col(NY,NX)     = 0.0_r8
+    TNUreaErosBand_col(NY,NX)   = 0.0_r8
+    TNO3ErosBand_col(NY,NX)     = 0.0_r8
 
-    trcx_TER(idx_beg:idx_end,NY,NX)   = 0.0_r8
-    trcp_TER(idsp_beg:idsp_end,NY,NX) = 0.0_r8
+    trcx_TER_col(idx_beg:idx_end,NY,NX)   = 0.0_r8
+    trcp_TER_col(idsp_beg:idsp_end,NY,NX) = 0.0_r8
 
-    TOMEERhetr(1:NumPlantChemElms,1:NumLiveHeterBioms,1:jcplx,NY,NX) = 0.0_r8
-    TOMEERauto(1:NumPlantChemElms,1:NumLiveAutoBioms,NY,NX)          = 0.0_r8
+    TOMEERhetr_col(1:NumPlantChemElms,1:NumLiveHeterBioms,1:jcplx,NY,NX) = 0.0_r8
+    TOMEERauto_col(1:NumPlantChemElms,1:NumLiveAutoBioms,NY,NX)          = 0.0_r8
 
-    TORMER(1:NumPlantChemElms,1:ndbiomcp,1:jcplx,NY,NX) = 0.0_r8
-    TOHMER(idom_beg:idom_end,1:jcplx,NY,NX)             = 0.0_r8
-    TOSMER(1:NumPlantChemElms,1:jsken,1:jcplx,NY,NX)    = 0.0_r8
-    TOSAER(1:jsken,1:jcplx,NY,NX)                       = 0.0_r8
+    TORMER_col(1:NumPlantChemElms,1:ndbiomcp,1:jcplx,NY,NX) = 0.0_r8
+    TOHMER_col(idom_beg:idom_end,1:jcplx,NY,NX)             = 0.0_r8
+    TOSMER_col(1:NumPlantChemElms,1:jsken,1:jcplx,NY,NX)    = 0.0_r8
+    TOSAER_col(1:jsken,1:jcplx,NY,NX)                       = 0.0_r8
   ENDIF
   end subroutine ZeroErosionArray
 

@@ -18,6 +18,7 @@ RUN apt-get install -y zip
 RUN apt-get install -y m4
 RUN apt-get install -y net-tools
 RUN apt-get install -y openssh-server
+RUN apt-get install -y libcurl4-openssl-dev
 
 RUN apt-get install -y python3.8 python3.8-dev python3.8-distutils
 RUN ln -s /usr/bin/python3.8 /usr/bin/python

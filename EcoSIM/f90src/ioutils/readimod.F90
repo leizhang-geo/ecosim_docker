@@ -275,42 +275,44 @@ module readiMod
 
   D9895: DO NX=NHW,NHE
     D9890: DO NY=NVN,NVS
-      ALAT(NY,NX)=ALATG
-      PBOT_col(NY,NX)=PBOT_col(NY,NX)*exp(-ALT(NY,NX)/hpresc)
-      ALTI(NY,NX)=ALTIG
-      ATCAI(NY,NX)=ATCAG
-      IDWaterTable(NY,NX)=iWaterTabelMode
-      OXYE(NY,NX)=ao2_ppm
-      Z2GE(NY,NX)=an2_ppm
-      CO2EI(NY,NX)=aco2_ppm
-      CH4E_col(NY,NX)=ach4_ppm
-      Z2OE(NY,NX)=an2o_ppm
-      ZNH3E_col(NY,NX)=ZNH3EG
-      KoppenClimZone_col(NY,NX)   = IETYPG
-      FlowDirIndicator(NY,NX)     = grid_mode
-      NatWtblDepz_col(NY,NX)      = WTBLDepz_nat
-      WtblDepzTile_col(NY,NX)     = WTBLDepz_tile
-      WaterTBLSlope(NY,NX)        = DTBLGG
+      ALAT(NY,NX)               = ALATG
+      PBOT_col(NY,NX)           = PBOT_col(NY,NX)*exp(-ALT(NY,NX)/hpresc)
+      ALTI(NY,NX)               = ALTIG
+      ATCAI(NY,NX)              = ATCAG
+      IDWaterTable_col(NY,NX)   = iWaterTabelMode
+      OXYE_col(NY,NX)           = ao2_ppm
+      Z2GE_col(NY,NX)           = an2_ppm
+      CO2EI(NY,NX)              = aco2_ppm
+      CH4E_col(NY,NX)           = ach4_ppm
+      Z2OE_col(NY,NX)           = an2o_ppm
+      ARGE_col(NY,NX)           = arg_ppm
+      ZNH3E_col(NY,NX)          = ZNH3EG
+      KoppenClimZone_col(NY,NX) = IETYPG
+      FlowDirIndicator(NY,NX)   = grid_mode
+      NatWtblDepz_col(NY,NX)    = WTBLDepz_nat
+      WtblDepzTile_col(NY,NX)   = WTBLDepz_tile
+      WaterTBLSlope_col(NY,NX)  = DTBLGG
 
-      RechargNorthSurf(NY,NX)     = RCHQNG
-      RechargEastSurf(NY,NX)      = RCHQEG
-      RechargSouthSurf(NY,NX)     = RCHQSG
-      RechargWestSurf(NY,NX)      = RCHQWG
+      RechargNorthSurf(NY,NX) = RCHQNG
+      RechargEastSurf(NY,NX)  = RCHQEG
+      RechargSouthSurf(NY,NX) = RCHQSG
+      RechargWestSurf(NY,NX)  = RCHQWG
 
-      RechargNorthSubSurf(NY,NX)  = RCHGNUG
-      RechargEastSubSurf(NY,NX)   = RCHGEUG
-      RechargSouthSubSurf(NY,NX)  = RCHGSUG
-      RechargWestSubSurf(NY,NX)   = RCHGWUG
+      RechargNorthSubSurf(NY,NX) = RCHGNUG
+      RechargEastSubSurf(NY,NX)  = RCHGEUG
+      RechargSouthSubSurf(NY,NX) = RCHGSUG
+      RechargWestSubSurf(NY,NX)  = RCHGWUG
 
       RechargRateNorthWTBL(NY,NX) = RCHGNTG
       RechargRateEastWTBL(NY,NX)  = RCHGETG
       RechargRateSouthWTBL(NY,NX) = RCHGSTG
       RechargRateWestWTBL(NY,NX)  = RCHGWTG
-      RCHGD(NY,NX)                = RCHGDG
-      DH(NY,NX)=DHI(NX)
-      DV(NY,NX)=DVI(NY)
-      CO2E_col(NY,NX)=CO2EI(NY,NX)
-      H2GE(NY,NX)=1.0E-03_r8
+      
+      RechargBottom_col(NY,NX)                = RCHGDG
+      DH(NY,NX)                   = DHI(NX)
+      DV(NY,NX)                   = DVI(NY)
+      CO2E_col(NY,NX)             = CO2EI(NY,NX)
+      H2GE_col(NY,NX)                 = 1.0E-03_r8
 !
 !     CALCULATE MAXIMUM DAYLENTH FOR PLANT PHENOLOGY
 !
@@ -376,14 +378,14 @@ module readiMod
 !
 !     SURFACE SLOPES AND ASPECTS
 !
-        ASP_col(NY,NX)=ASPX
-        SL(NY,NX)=SL0
-        SnowDepth_col(NY,NX)=initSnowDepth
+        ASP_col(NY,NX)       = ASPX
+        SL(NY,NX)            = SL0
+        SnowDepth_col(NY,NX) = initSnowDepth
 !
 !     CONVERT ASPECT from geographic format TO GEOMETRIC FORMAT
 !
 !     what is geometric format mean? geographic format 0 is north, 90 east, 180 south,
-!     geometric format 0/360 is east, counting as counterclock wise
+!     geometric format 0/360 is east, 90 north, 180 west, 270 south
         ASP_col(NY,NX)=450.0_r8-ASP_col(NY,NX)
         IF(ASP_col(NY,NX).GE.360.0_r8)ASP_col(NY,NX)=ASP_col(NY,NX)-360.0_r8
       ENDDO
@@ -392,7 +394,7 @@ module readiMod
     call ncd_getvar(grid_nfid, 'PSIFC', ntp,PSIAtFldCapacity(NV1,NH1))
     call ncd_getvar(grid_nfid, 'PSIWP', ntp,PSIAtWiltPoint(NV1,NH1))
     call ncd_getvar(grid_nfid, 'ALBS',  ntp,SoilAlbedo_col(NV1,NH1))
-    call ncd_getvar(grid_nfid, 'PH0',   ntp,PH(0,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'PH0',   ntp,PH_vr(0,NV1,NH1))
     call ncd_getvar(grid_nfid, 'RSCf',  ntp,RSC(k_fine_litr,0,NV1,NH1))
     call ncd_getvar(grid_nfid, 'RSNf',  ntp,RSN(k_fine_litr,0,NV1,NH1))
     call ncd_getvar(grid_nfid, 'RSPf',  ntp,RSP(k_fine_litr,0,NV1,NH1))
@@ -402,23 +404,23 @@ module readiMod
     call ncd_getvar(grid_nfid, 'RSCm',  ntp,RSC(k_manure,0,NV1,NH1))
     call ncd_getvar(grid_nfid, 'RSNm',  ntp,RSN(k_manure,0,NV1,NH1))
     call ncd_getvar(grid_nfid, 'RSPm',  ntp,RSP(k_manure,0,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'IXTYP1',ntp,IXTYP(1,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'IXTYP2',ntp,IXTYP(2,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'IXTYP1',ntp,iLitrType_col(1,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'IXTYP2',ntp,iLitrType_col(2,NV1,NH1))
     call ncd_getvar(grid_nfid, 'NUI'   ,ntp,NUI(NV1,NH1))
     call ncd_getvar(grid_nfid, 'NJ'    ,ntp,MaxNumRootLays(NV1,NH1))
     call ncd_getvar(grid_nfid, 'NL1'   ,ntp,NL1)
     call ncd_getvar(grid_nfid, 'NL2'   ,ntp,NL2)
     call ncd_getvar(grid_nfid, 'ISOILR',ntp,ISOILR(NV1,NH1))
-
-    NU(NV1,NH1)=NUI(NV1,NH1)
-    NK(NV1,NH1)=MaxNumRootLays(NV1,NH1)+1
-    NM(NV1,NH1)=MaxNumRootLays(NV1,NH1)+NL1
+    
+    NU(NV1,NH1) = NUI(NV1,NH1)
+    NK(NV1,NH1) = MaxNumRootLays(NV1,NH1)+1
+    NM(NV1,NH1) = MaxNumRootLays(NV1,NH1)+NL1
 !  the extra soil layer below root zone cannot be greater than what is allowed
     NL2=min0(JZ-NM(NV1,NH1),NL2)
     NLI(NV1,NH1)=NM(NV1,NH1)+NL2
     NL(NV1,NH1)=NLI(NV1,NH1)
 
-    call ncd_getvar(grid_nfid, 'CDPTH',ntp,CumDepz2LayerBot_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CDPTH',ntp,CumDepz2LayBottom_vr(1:JZ,NV1,NH1))
     call ncd_getvar(grid_nfid, 'BKDSI',ntp,SoiBulkDensityt0_vr(1:JZ,NV1,NH1))
 
     call ncd_getvar(grid_nfid, 'FC', ntp,FieldCapacity_vr(1:JZ,NV1,NH1))
@@ -426,12 +428,12 @@ module readiMod
     call ncd_getvar(grid_nfid, 'SCNV', ntp,SatHydroCondVert_vr(1:JZ,NV1,NH1))
     call ncd_getvar(grid_nfid, 'SCNH', ntp,SatHydroCondHrzn_vr(1:JZ,NV1,NH1))
 
-    call ncd_getvar(grid_nfid, 'CSAND',ntp,CSAND(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CSAND',ntp,CSAND_vr(1:JZ,NV1,NH1))
     call ncd_getvar(grid_nfid, 'CSILT',ntp,CSILT(1:JZ,NV1,NH1))
     call ncd_getvar(grid_nfid, 'FHOL',ntp,SoilFracAsMacP_vr(1:JZ,NV1,NH1))
     call ncd_getvar(grid_nfid, 'ROCK',ntp,ROCK_vr(1:JZ,NV1,NH1))
 
-    call ncd_getvar(grid_nfid, 'PH',ntp,PH(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'PH',ntp,PH_vr(1:JZ,NV1,NH1))
     !meq/100g means 1.e-3 mol/100 g =1 cmol/kg , cmol ~ 1.e-2 mol
     call ncd_getvar(grid_nfid, 'CEC',ntp,CEC_vr(1:JZ,NV1,NH1))
     call ncd_getvar(grid_nfid, 'AEC',ntp,AEC_vr(1:JZ,NV1,NH1))
@@ -441,38 +443,38 @@ module readiMod
     call ncd_getvar(grid_nfid, 'CORGN',ntp,CSoilOrgM_vr(ielmn,1:JZ,NV1,NH1))
     call ncd_getvar(grid_nfid, 'CORGP',ntp,CSoilOrgM_vr(ielmp,1:JZ,NV1,NH1))
 
-    call ncd_getvar(grid_nfid, 'CNH4',ntp,CNH4(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CNO3',ntp,CNO3(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CPO4',ntp,CPO4(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CNH4',ntp,CNH4_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CNO3',ntp,CNO3_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CPO4',ntp,CPO4_vr(1:JZ,NV1,NH1))
 
-    call ncd_getvar(grid_nfid, 'CAL' ,ntp,CAL(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CFE' ,ntp,CFE(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CCA' ,ntp,CCA(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CAL' ,ntp,CAL_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CFE' ,ntp,CFE_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CCA' ,ntp,CCA_vr(1:JZ,NV1,NH1))
 
-    call ncd_getvar(grid_nfid, 'CMG' ,ntp,CMG(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CNA' ,ntp,CNA(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CKA' ,ntp,CKA(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CSO4',ntp,CSO4(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CCL',ntp,CCL(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CMG' ,ntp,CMG_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CNA' ,ntp,CNA_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CKA' ,ntp,CKA_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CSO4',ntp,CSO4_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CCL',ntp,CCL_vr(1:JZ,NV1,NH1))
 
-    call ncd_getvar(grid_nfid, 'CALPO',ntp,CALPO(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CFEPO',ntp,CFEPO(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CCAPD',ntp,CCAPD(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CCAPH',ntp,CCAPH(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CALOH',ntp,CALOH(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CFEOH',ntp,CFEOH(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CCACO',ntp,CCACO(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'CCASO',ntp,CCASO(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CALPO',ntp,CALPO_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CFEPO',ntp,CFEPO_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CCAPD',ntp,CCAPD_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CCAPH',ntp,CCAPH_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CALOH',ntp,CALOH_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CFEOH',ntp,CFEOH_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CCACO',ntp,CCACO_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'CCASO',ntp,CCASO_vr(1:JZ,NV1,NH1))
 
-    call ncd_getvar(grid_nfid, 'GKC4',ntp,GKC4(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'GKCH',ntp,GKCH(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'GKCA',ntp,GKCA(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'GKCM',ntp,GKCM(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'GKCN',ntp,GKCN(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'GKCK',ntp,GKCK(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'GKC4',ntp,GKC4_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'GKCH',ntp,GKCH_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'GKCA',ntp,GKCA_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'GKCM',ntp,GKCM_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'GKCN',ntp,GKCN_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'GKCK',ntp,GKCK_vr(1:JZ,NV1,NH1))
 
-    call ncd_getvar(grid_nfid, 'THW',ntp,THW(1:JZ,NV1,NH1))
-    call ncd_getvar(grid_nfid, 'THI',ntp,THI(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'THW',ntp,THW_vr(1:JZ,NV1,NH1))
+    call ncd_getvar(grid_nfid, 'THI',ntp,THI_vr(1:JZ,NV1,NH1))
 
     call ncd_getvar(grid_nfid, 'RSCfL',ntp,dat1(1:JZ));RSC(k_fine_litr,1:JZ,NV1,NH1)=dat1(1:JZ)
     call ncd_getvar(grid_nfid, 'RSNfL',ntp,dat1(1:JZ));RSN(k_fine_litr,1:JZ,NV1,NH1)=dat1(1:JZ)
@@ -499,30 +501,30 @@ module readiMod
 !     NL1,NL2=number of additional layers below NJ with,without data in file
 !     ISOILR=natural(0),reconstructed(1) soil profile
 !
-          PSIAtFldCapacity(NY,NX)=PSIAtFldCapacity(NV1,NH1)
-          PSIAtWiltPoint(NY,NX)=PSIAtWiltPoint(NV1,NH1)
-          SoilAlbedo_col(NY,NX) =SoilAlbedo_col(NV1,NH1)
-          PH(0,NY,NX) =PH(0,NV1,NH1)
-          RSC(k_fine_litr,0,NY,NX) =RSC(k_fine_litr,0,NV1,NH1)
-          RSN(k_fine_litr,0,NY,NX) =RSN(k_fine_litr,0,NV1,NH1)
-          RSP(k_fine_litr,0,NY,NX) =RSP(k_fine_litr,0,NV1,NH1)
-          RSC(k_woody_litr,0,NY,NX) =RSC(k_woody_litr,0,NV1,NH1)
-          RSN(k_woody_litr,0,NY,NX) =RSN(k_woody_litr,0,NV1,NH1)
-          RSP(k_woody_litr,0,NY,NX) =RSP(k_woody_litr,0,NV1,NH1)
-          RSC(k_manure,0,NY,NX) =RSC(k_manure,0,NV1,NH1)
-          RSN(k_manure,0,NY,NX) =RSN(k_manure,0,NV1,NH1)
-          RSP(k_manure,0,NY,NX) =RSP(k_manure,0,NV1,NH1)
-          IXTYP(1,NY,NX) =IXTYP(1,NV1,NH1)
-          IXTYP(2,NY,NX) =IXTYP(2,NV1,NH1)
-          NUI(NY,NX) = NUI(NV1,NH1)
-          MaxNumRootLays(NY,NX)  = MaxNumRootLays(NV1,NH1)
-          ISOILR(NY,NX)=ISOILR(NV1,NH1)
-          NU(NY,NX)=NU(NV1,NH1)
-          NK(NY,NX)=NK(NV1,NH1)
-          NM(NY,NX)=NM(NV1,NH1)
+          PSIAtFldCapacity(NY,NX)   = PSIAtFldCapacity(NV1,NH1)
+          PSIAtWiltPoint(NY,NX)     = PSIAtWiltPoint(NV1,NH1)
+          SoilAlbedo_col(NY,NX)     = SoilAlbedo_col(NV1,NH1)
+          PH_vr(0,NY,NX)               = PH_vr(0,NV1,NH1)
+          RSC(k_fine_litr,0,NY,NX)  = RSC(k_fine_litr,0,NV1,NH1)
+          RSN(k_fine_litr,0,NY,NX)  = RSN(k_fine_litr,0,NV1,NH1)
+          RSP(k_fine_litr,0,NY,NX)  = RSP(k_fine_litr,0,NV1,NH1)
+          RSC(k_woody_litr,0,NY,NX) = RSC(k_woody_litr,0,NV1,NH1)
+          RSN(k_woody_litr,0,NY,NX) = RSN(k_woody_litr,0,NV1,NH1)
+          RSP(k_woody_litr,0,NY,NX) = RSP(k_woody_litr,0,NV1,NH1)
+          RSC(k_manure,0,NY,NX)     = RSC(k_manure,0,NV1,NH1)
+          RSN(k_manure,0,NY,NX)     = RSN(k_manure,0,NV1,NH1)
+          RSP(k_manure,0,NY,NX)     = RSP(k_manure,0,NV1,NH1)
+          iLitrType_col(1,NY,NX)            = iLitrType_col(1,NV1,NH1)
+          iLitrType_col(2,NY,NX)            = iLitrType_col(2,NV1,NH1)
+          NUI(NY,NX)                = NUI(NV1,NH1)
+          MaxNumRootLays(NY,NX)     = MaxNumRootLays(NV1,NH1)
+          ISOILR(NY,NX)             = ISOILR(NV1,NH1)
+          NU(NY,NX)                 = NU(NV1,NH1)
+          NK(NY,NX)                 = NK(NV1,NH1)
+          NM(NY,NX)                 = NM(NV1,NH1)
 !  the extra soil layer below root zone cannot be greater than what is allowed
-          NLI(NY,NX)=NLI(NV1,NH1)
-          NL(NY,NX)=NLI(NV1,NH1)
+          NLI(NY,NX) = NLI(NV1,NH1)
+          NL(NY,NX)  = NLI(NV1,NH1)
         ENDIF
 
 !
@@ -532,57 +534,60 @@ module readiMod
 !     SoiBulkDensityt0_vr=initial bulk density (Mg m-3,0=water), it refers to solid matter
 !
 !
+        iPondFlag_col(NY,NX)=.false.
         IF (NX/=NH1 .OR. NY/=NV1) THEN
           DO L=NU(NY,NX),NM(NY,NX)
-            CumDepz2LayerBot_vr(L,NY,NX) = CumDepz2LayerBot_vr(L,NV1,NH1)
-            SoiBulkDensityt0_vr(L,NY,NX) = SoiBulkDensityt0_vr(L,NV1,NH1)
-            FieldCapacity_vr(L,NY,NX)    = FieldCapacity_vr(L,NV1,NH1)
-            WiltPoint_vr(L,NY,NX)        = WiltPoint_vr(L,NV1,NH1)
-            SatHydroCondVert_vr(L,NY,NX) = SatHydroCondVert_vr(L,NV1,NH1)
-            SatHydroCondHrzn_vr(L,NY,NX) = SatHydroCondHrzn_vr(L,NV1,NH1)
-            CSAND(L,NY,NX)               = CSAND(L,NV1,NH1)
-            CSILT(L,NY,NX)               = CSILT(L,NV1,NH1)
-            SoilFracAsMacP_vr(L,NY,NX)   = SoilFracAsMacP_vr(L,NV1,NH1)
-            ROCK_vr(L,NY,NX)             = ROCK_vr(L,NV1,NH1)
-            PH(L,NY,NX)                  = PH(L,NV1,NH1)
-            CEC_vr(L,NY,NX)                 = CEC_vr(L,NV1,NH1)
-            AEC_vr(L,NY,NX)                 = AEC_vr(L,NV1,NH1)
-            CSoilOrgM_vr(ielmc,L,NY,NX)  = CSoilOrgM_vr(ielmc,L,NV1,NH1)
-            COMLitrC_vr(L,NY,NX)         = COMLitrC_vr(L,NV1,NH1)
-            CSoilOrgM_vr(ielmn,L,NY,NX)  = CSoilOrgM_vr(ielmn,L,NV1,NH1)
-            CSoilOrgM_vr(ielmp,L,NY,NX)  = CSoilOrgM_vr(ielmp,L,NV1,NH1)
+            CumDepz2LayBottom_vr(L,NY,NX) = CumDepz2LayBottom_vr(L,NV1,NH1)
+            SoiBulkDensityt0_vr(L,NY,NX)  = SoiBulkDensityt0_vr(L,NV1,NH1)
+            if(.not.iPondFlag_col(NY,NX))iPondFlag_col(NY,NX)=SoiBulkDensityt0_vr(L,NY,NX).LE.ZERO
+            if(SoiBulkDensityt0_vr(L,NY,NX).LE.ZERO)iPondBotLev_col(NY,NX)=L
+            FieldCapacity_vr(L,NY,NX)     = FieldCapacity_vr(L,NV1,NH1)
+            WiltPoint_vr(L,NY,NX)         = WiltPoint_vr(L,NV1,NH1)
+            SatHydroCondVert_vr(L,NY,NX)  = SatHydroCondVert_vr(L,NV1,NH1)
+            SatHydroCondHrzn_vr(L,NY,NX)  = SatHydroCondHrzn_vr(L,NV1,NH1)
+            CSAND_vr(L,NY,NX)             = CSAND_vr(L,NV1,NH1)
+            CSILT(L,NY,NX)                = CSILT(L,NV1,NH1)
+            SoilFracAsMacP_vr(L,NY,NX)    = SoilFracAsMacP_vr(L,NV1,NH1)
+            ROCK_vr(L,NY,NX)              = ROCK_vr(L,NV1,NH1)
+            PH_vr(L,NY,NX)                = PH_vr(L,NV1,NH1)
+            CEC_vr(L,NY,NX)               = CEC_vr(L,NV1,NH1)
+            AEC_vr(L,NY,NX)               = AEC_vr(L,NV1,NH1)
+            CSoilOrgM_vr(ielmc,L,NY,NX)   = CSoilOrgM_vr(ielmc,L,NV1,NH1)
+            COMLitrC_vr(L,NY,NX)          = COMLitrC_vr(L,NV1,NH1)
+            CSoilOrgM_vr(ielmn,L,NY,NX)   = CSoilOrgM_vr(ielmn,L,NV1,NH1)
+            CSoilOrgM_vr(ielmp,L,NY,NX)   = CSoilOrgM_vr(ielmp,L,NV1,NH1)
 
-            CNH4(L,NY,NX) = CNH4(L,NV1,NH1)
-            CNO3(L,NY,NX) = CNO3(L,NV1,NH1)
-            CPO4(L,NY,NX) = CPO4(L,NV1,NH1)
+            CNH4_vr(L,NY,NX) = CNH4_vr(L,NV1,NH1)
+            CNO3_vr(L,NY,NX) = CNO3_vr(L,NV1,NH1)
+            CPO4_vr(L,NY,NX) = CPO4_vr(L,NV1,NH1)
 
-            CAL(L,NY,NX)  = CAL(L,NV1,NH1)
-            CFE(L,NY,NX)  = CFE(L,NV1,NH1)
-            CCA(L,NY,NX)  = CCA(L,NV1,NH1)
-            CMG(L,NY,NX)  = CMG(L,NV1,NH1)
-            CNA(L,NY,NX)  = CNA(L,NV1,NH1)
-            CKA(L,NY,NX)  = CKA(L,NV1,NH1)
-            CSO4(L,NY,NX) = CSO4(L,NV1,NH1)
-            CCL(L,NY,NX)  = CCL(L,NV1,NH1)
+            CAL_vr(L,NY,NX)  = CAL_vr(L,NV1,NH1)
+            CFE_vr(L,NY,NX)  = CFE_vr(L,NV1,NH1)
+            CCA_vr(L,NY,NX)  = CCA_vr(L,NV1,NH1)
+            CMG_vr(L,NY,NX)  = CMG_vr(L,NV1,NH1)
+            CNA_vr(L,NY,NX)  = CNA_vr(L,NV1,NH1)
+            CKA_vr(L,NY,NX)  = CKA_vr(L,NV1,NH1)
+            CSO4_vr(L,NY,NX) = CSO4_vr(L,NV1,NH1)
+            CCL_vr(L,NY,NX)  = CCL_vr(L,NV1,NH1)
 
-            CALPO(L,NY,NX) = CALPO(L,NV1,NH1)
-            CFEPO(L,NY,NX) = CFEPO(L,NV1,NH1)
-            CCAPD(L,NY,NX) = CCAPD(L,NV1,NH1)
-            CCAPH(L,NY,NX) = CCAPH(L,NV1,NH1)
-            CALOH(L,NY,NX) = CALOH(L,NV1,NH1)
-            CFEOH(L,NY,NX) = CFEOH(L,NV1,NH1)
-            CCACO(L,NY,NX) = CCACO(L,NV1,NH1)
-            CCASO(L,NY,NX) = CCASO(L,NV1,NH1)
+            CALPO_vr(L,NY,NX) = CALPO_vr(L,NV1,NH1)
+            CFEPO_vr(L,NY,NX) = CFEPO_vr(L,NV1,NH1)
+            CCAPD_vr(L,NY,NX) = CCAPD_vr(L,NV1,NH1)
+            CCAPH_vr(L,NY,NX) = CCAPH_vr(L,NV1,NH1)
+            CALOH_vr(L,NY,NX) = CALOH_vr(L,NV1,NH1)
+            CFEOH_vr(L,NY,NX) = CFEOH_vr(L,NV1,NH1)
+            CCACO_vr(L,NY,NX) = CCACO_vr(L,NV1,NH1)
+            CCASO_vr(L,NY,NX) = CCASO_vr(L,NV1,NH1)
 
-            GKC4(L,NY,NX) = GKC4(L,NV1,NH1)
-            GKCH(L,NY,NX) = GKCH(L,NV1,NH1)
-            GKCA(L,NY,NX) = GKCA(L,NV1,NH1)
-            GKCM(L,NY,NX) = GKCM(L,NV1,NH1)
-            GKCN(L,NY,NX) = GKCN(L,NV1,NH1)
-            GKCK(L,NY,NX) = GKCK(L,NV1,NH1)
+            GKC4_vr(L,NY,NX) = GKC4_vr(L,NV1,NH1)
+            GKCH_vr(L,NY,NX) = GKCH_vr(L,NV1,NH1)
+            GKCA_vr(L,NY,NX) = GKCA_vr(L,NV1,NH1)
+            GKCM_vr(L,NY,NX) = GKCM_vr(L,NV1,NH1)
+            GKCN_vr(L,NY,NX) = GKCN_vr(L,NV1,NH1)
+            GKCK_vr(L,NY,NX) = GKCK_vr(L,NV1,NH1)
 
-            THW(L,NY,NX) = THW(L,NV1,NH1)
-            THI(L,NY,NX) = THI(L,NV1,NH1)
+            THW_vr(L,NY,NX) = THW_vr(L,NV1,NH1)
+            THI_vr(L,NY,NX) = THI_vr(L,NV1,NH1)
 
             RSC(k_fine_litr,L,NY,NX)  = RSC(k_fine_litr,L,NV1,NH1)
             RSN(k_fine_litr,L,NY,NX)  = RSN(k_fine_litr,L,NV1,NH1)
@@ -600,9 +605,10 @@ module readiMod
         if(lverb)then
           CALL Disp_topo_charc(NY,NX,NU(NY,NX),NM(NY,NX))
         endif
-        RSC(k_fine_litr,0,NY,NX)     = AMAX1(ppmc,RSC(k_fine_litr,0,NY,NX))
-        RSN(k_fine_litr,0,NY,NX)     = AMAX1(0.04E-06_r8,RSN(k_fine_litr,0,NY,NX))
-        RSP(k_fine_litr,0,NY,NX)     = AMAX1(0.004E-06_r8,RSP(k_fine_litr,0,NY,NX))
+!        RSC(k_fine_litr,0,NY,NX)     = AMAX1(ppmc,RSC(k_fine_litr,0,NY,NX))
+!        RSN(k_fine_litr,0,NY,NX)     = AMAX1(0.04E-06_r8,RSN(k_fine_litr,0,NY,NX))
+!        RSP(k_fine_litr,0,NY,NX)     = AMAX1(0.004E-06_r8,RSP(k_fine_litr,0,NY,NX))
+
         SatHydroCondVert_vr(0,NY,NX) = 10.0_r8*0.098_r8
 !
 !     SET FLAGS FOR ESTIMATING FC,WP,SCNV,SCNH IF UNKNOWN
@@ -619,9 +625,9 @@ module readiMod
         IF(NU(NY,NX).GT.1)THEN
           DO  L=NU(NY,NX)-1,0,-1
             IF(SoiBulkDensityt0_vr(L+1,NY,NX).GT.0.025_r8)THEN
-              CumDepz2LayerBot_vr(L,NY,NX)=CumDepz2LayerBot_vr(L+1,NY,NX)-0.01_r8
+              CumDepz2LayBottom_vr(L,NY,NX)=CumDepz2LayBottom_vr(L+1,NY,NX)-0.01_r8
             ELSE
-              CumDepz2LayerBot_vr(L,NY,NX)=CumDepz2LayerBot_vr(L+1,NY,NX)-0.02_r8
+              CumDepz2LayBottom_vr(L,NY,NX)=CumDepz2LayBottom_vr(L+1,NY,NX)-0.02_r8
             ENDIF
             IF(L.GT.0)THEN
               SoiBulkDensityt0_vr(L,NY,NX) = SoiBulkDensityt0_vr(L+1,NY,NX)
@@ -629,45 +635,45 @@ module readiMod
               WiltPoint_vr(L,NY,NX)        = WiltPoint_vr(L+1,NY,NX)
               SatHydroCondVert_vr(L,NY,NX) = SatHydroCondVert_vr(L+1,NY,NX)
               SatHydroCondHrzn_vr(L,NY,NX) = SatHydroCondHrzn_vr(L+1,NY,NX)
-              CSAND(L,NY,NX)               = CSAND(L+1,NY,NX)
+              CSAND_vr(L,NY,NX)            = CSAND_vr(L+1,NY,NX)
               CSILT(L,NY,NX)               = CSILT(L+1,NY,NX)
-              CCLAY(L,NY,NX)               = CCLAY(L+1,NY,NX)
+              CCLAY_vr(L,NY,NX)            = CCLAY_vr(L+1,NY,NX)
               SoilFracAsMacP_vr(L,NY,NX)   = SoilFracAsMacP_vr(L+1,NY,NX)
               ROCK_vr(L,NY,NX)             = ROCK_vr(L+1,NY,NX)
-              PH(L,NY,NX)                  = PH(L+1,NY,NX)
-              CEC_vr(L,NY,NX)                 = CEC_vr(L+1,NY,NX)
-              AEC_vr(L,NY,NX)                 = AEC_vr(L+1,NY,NX)
+              PH_vr(L,NY,NX)               = PH_vr(L+1,NY,NX)
+              CEC_vr(L,NY,NX)              = CEC_vr(L+1,NY,NX)
+              AEC_vr(L,NY,NX)              = AEC_vr(L+1,NY,NX)
               CSoilOrgM_vr(ielmc,L,NY,NX)  = 1.0_r8*CSoilOrgM_vr(ielmc,L+1,NY,NX)
               COMLitrC_vr(L,NY,NX)         = 1.0_r8*COMLitrC_vr(L+1,NY,NX)
               CSoilOrgM_vr(ielmn,L,NY,NX)  = 1.0_r8*CSoilOrgM_vr(ielmn,L+1,NY,NX)
               CSoilOrgM_vr(ielmp,L,NY,NX)  = 1.0_r8*CSoilOrgM_vr(ielmp,L+1,NY,NX)
-              CNH4(L,NY,NX)                = CNH4(L+1,NY,NX)
-              CNO3(L,NY,NX)                = CNO3(L+1,NY,NX)
-              CPO4(L,NY,NX)                = CPO4(L+1,NY,NX)
-              CAL(L,NY,NX)                 = CAL(L+1,NY,NX)
-              CFE(L,NY,NX)                 = CFE(L+1,NY,NX)
-              CCA(L,NY,NX)                 = CCA(L+1,NY,NX)
-              CMG(L,NY,NX)                 = CMG(L+1,NY,NX)
-              CNA(L,NY,NX)                 = CNA(L+1,NY,NX)
-              CKA(L,NY,NX)                 = CKA(L+1,NY,NX)
-              CSO4(L,NY,NX)                = CSO4(L+1,NY,NX)
-              CCL(L,NY,NX)                 = CCL(L+1,NY,NX)
-              CALOH(L,NY,NX)               = CALOH(L+1,NY,NX)
-              CFEOH(L,NY,NX)               = CFEOH(L+1,NY,NX)
-              CCACO(L,NY,NX)               = CCACO(L+1,NY,NX)
-              CCASO(L,NY,NX)               = CCASO(L+1,NY,NX)
-              CALPO(L,NY,NX)               = CALPO(L+1,NY,NX)
-              CFEPO(L,NY,NX)               = CFEPO(L+1,NY,NX)
-              CCAPD(L,NY,NX)               = CCAPD(L+1,NY,NX)
-              CCAPH(L,NY,NX)               = CCAPH(L+1,NY,NX)
-              GKC4(L,NY,NX)                = GKC4(L+1,NY,NX)
-              GKCH(L,NY,NX)                = GKCH(L+1,NY,NX)
-              GKCA(L,NY,NX)                = GKCA(L+1,NY,NX)
-              GKCM(L,NY,NX)                = GKCM(L+1,NY,NX)
-              GKCN(L,NY,NX)                = GKCN(L+1,NY,NX)
-              GKCK(L,NY,NX)                = GKCK(L+1,NY,NX)
-              THW(L,NY,NX)                 = THW(L+1,NY,NX)
-              THI(L,NY,NX)                 = THI(L+1,NY,NX)
+              CNH4_vr(L,NY,NX)             = CNH4_vr(L+1,NY,NX)
+              CNO3_vr(L,NY,NX)             = CNO3_vr(L+1,NY,NX)
+              CPO4_vr(L,NY,NX)             = CPO4_vr(L+1,NY,NX)
+              CAL_vr(L,NY,NX)              = CAL_vr(L+1,NY,NX)
+              CFE_vr(L,NY,NX)              = CFE_vr(L+1,NY,NX)
+              CCA_vr(L,NY,NX)              = CCA_vr(L+1,NY,NX)
+              CMG_vr(L,NY,NX)              = CMG_vr(L+1,NY,NX)
+              CNA_vr(L,NY,NX)              = CNA_vr(L+1,NY,NX)
+              CKA_vr(L,NY,NX)              = CKA_vr(L+1,NY,NX)
+              CSO4_vr(L,NY,NX)             = CSO4_vr(L+1,NY,NX)
+              CCL_vr(L,NY,NX)              = CCL_vr(L+1,NY,NX)
+              CALOH_vr(L,NY,NX)            = CALOH_vr(L+1,NY,NX)
+              CFEOH_vr(L,NY,NX)            = CFEOH_vr(L+1,NY,NX)
+              CCACO_vr(L,NY,NX)            = CCACO_vr(L+1,NY,NX)
+              CCASO_vr(L,NY,NX)            = CCASO_vr(L+1,NY,NX)
+              CALPO_vr(L,NY,NX)            = CALPO_vr(L+1,NY,NX)
+              CFEPO_vr(L,NY,NX)            = CFEPO_vr(L+1,NY,NX)
+              CCAPD_vr(L,NY,NX)            = CCAPD_vr(L+1,NY,NX)
+              CCAPH_vr(L,NY,NX)            = CCAPH_vr(L+1,NY,NX)
+              GKC4_vr(L,NY,NX)             = GKC4_vr(L+1,NY,NX)
+              GKCH_vr(L,NY,NX)             = GKCH_vr(L+1,NY,NX)
+              GKCA_vr(L,NY,NX)             = GKCA_vr(L+1,NY,NX)
+              GKCM_vr(L,NY,NX)             = GKCM_vr(L+1,NY,NX)
+              GKCN_vr(L,NY,NX)             = GKCN_vr(L+1,NY,NX)
+              GKCK_vr(L,NY,NX)             = GKCK_vr(L+1,NY,NX)
+              THW_vr(L,NY,NX)              = THW_vr(L+1,NY,NX)
+              THI_vr(L,NY,NX)              = THI_vr(L+1,NY,NX)
               ISOIL(1:4,L,NY,NX)           = ISOIL(1:4,L+1,NY,NX)
               RSC(k_fine_litr,L,NY,NX)     = 0.0_r8
               RSN(k_fine_litr,L,NY,NX)     = 0.0_r8
@@ -692,7 +698,7 @@ module readiMod
 !
 !   FracSoiAsMicP_vr=micropore fraction excluding macropore,rock
 !   SCNV,SCNH=vertical,lateral Ksat converted to m2 MPa-1 h-1
-!   CSAND,CSILT,CCLAY=sand,silt,clay content converted to g Mg-1
+!   CSAND_vr,CSILT,CCLAY_vr=sand,silt,clay content converted to g Mg-1
 !   CORGC,CORGR=SOC,POC converted to g Mg-1
 !   CEC,AEC=cation,anion exchange capacity converted to mol Mg-1
 !   CNH4...=solute concentrations converted to mol Mg-1
@@ -701,8 +707,8 @@ module readiMod
         DO  L=1,NL(NY,NX)
   !   SoilFracAsMacP: macropore fraction
   !     SoiBulkDensityt0_vr(L,NY,NX)=SoiBulkDensityt0_vr(L,NY,NX)/(1.0_r8-SoilFracAsMacP_vr(L,NY,NX))
-          SoiBulkDensity_vr(L,NY,NX)=SoiBulkDensityt0_vr(L,NY,NX)
-          IF(isclose(SoiBulkDensity_vr(L,NY,NX),0.0_r8))SoilFracAsMacP_vr(L,NY,NX)=0.0_r8
+          SoilBulkDensity_vr(L,NY,NX)=SoiBulkDensityt0_vr(L,NY,NX)
+          IF(isclose(SoilBulkDensity_vr(L,NY,NX),0.0_r8))SoilFracAsMacP_vr(L,NY,NX)=0.0_r8
   !     fraction of soil as micropore
           FracSoiAsMicP_vr(L,NY,NX)=(1.0_r8-ROCK_vr(L,NY,NX))*(1.0_r8-SoilFracAsMacP_vr(L,NY,NX))
   !  Macropore correction is off, when reporting from measurements, FieldCapacity includes contribution from
@@ -712,39 +718,39 @@ module readiMod
   !
           SatHydroCondVert_vr(L,NY,NX)=0.098_r8*SatHydroCondVert_vr(L,NY,NX)*FracSoiAsMicP_vr(L,NY,NX)
           SatHydroCondHrzn_vr(L,NY,NX)=0.098_r8*SatHydroCondHrzn_vr(L,NY,NX)*FracSoiAsMicP_vr(L,NY,NX)
-          CCLAY(L,NY,NX)=AZMAX1(1.0E+03_r8-(CSAND(L,NY,NX)+CSILT(L,NY,NX)))
+          CCLAY_vr(L,NY,NX)=AZMAX1(1.0E+03_r8-(CSAND_vr(L,NY,NX)+CSILT(L,NY,NX)))
           CSoilOrgM_vr(ielmc,L,NY,NX)=CSoilOrgM_vr(ielmc,L,NY,NX)*1.0E+03_r8   !convert from Kg to g C
           CSoilOrgM_vr(ielmn,L,NY,NX)=CSoilOrgM_vr(ielmn,L,NY,NX)*1.0E+03_r8   !convert from Kg to g C
           CSoilOrgM_vr(ielmp,L,NY,NX)=CSoilOrgM_vr(ielmp,L,NY,NX)*1.0E+03_r8   !convert from Kg to g C
           COMLitrC_vr(L,NY,NX)=COMLitrC_vr(L,NY,NX)*1.0E+03_r8   !convert from Kg to g C
-          CORGCI(L,NY,NX)=CSoilOrgM_vr(ielmc,L,NY,NX)
+          CORGCI_vr(L,NY,NX)=CSoilOrgM_vr(ielmc,L,NY,NX)
           SoilFracAsMacPt0_vr(L,NY,NX)=SoilFracAsMacP_vr(L,NY,NX)
   ! soil texture is reported based on mass basis soley for mineral component of the soil
           corrector=1.0E-03_r8*AZMAX1((1.0_r8-CSoilOrgM_vr(ielmc,L,NY,NX)/orgcden))
-          CSAND(L,NY,NX)=CSAND(L,NY,NX)*corrector
+          CSAND_vr(L,NY,NX)=CSAND_vr(L,NY,NX)*corrector
           CSILT(L,NY,NX)=CSILT(L,NY,NX)*corrector
-          CCLAY(L,NY,NX)=CCLAY(L,NY,NX)*corrector
+          CCLAY_vr(L,NY,NX)=CCLAY_vr(L,NY,NX)*corrector
           CEC_vr(L,NY,NX)=CEC_vr(L,NY,NX)*10.0_r8   !convert from meq/100g to cmol/kg
           AEC_vr(L,NY,NX)=AEC_vr(L,NY,NX)*10.0_r8   !convert from meq/100g to cmol/kg
-          CNH4(L,NY,NX)=CNH4(L,NY,NX)/natomw
-          CNO3(L,NY,NX)=CNO3(L,NY,NX)/natomw
-          CPO4(L,NY,NX)=CPO4(L,NY,NX)/patomw
-          CAL(L,NY,NX)=CAL(L,NY,NX)/27.0_r8
-          CFE(L,NY,NX)=CFE(L,NY,NX)/56.0_r8
-          CCA(L,NY,NX)=CCA(L,NY,NX)/40.0_r8
-          CMG(L,NY,NX)=CMG(L,NY,NX)/24.3_r8
-          CNA(L,NY,NX)=CNA(L,NY,NX)/23.0_r8
-          CKA(L,NY,NX)=CKA(L,NY,NX)/39.1_r8
-          CSO4(L,NY,NX)=CSO4(L,NY,NX)/32.0_r8
-          CCL(L,NY,NX)=CCL(L,NY,NX)/35.5_r8
-          CALPO(L,NY,NX)=CALPO(L,NY,NX)/patomw
-          CFEPO(L,NY,NX)=CFEPO(L,NY,NX)/patomw
-          CCAPD(L,NY,NX)=CCAPD(L,NY,NX)/patomw
-          CCAPH(L,NY,NX)=CCAPH(L,NY,NX)/(patomw*3.0_r8)
-          CALOH(L,NY,NX)=CALOH(L,NY,NX)/27.0_r8
-          CFEOH(L,NY,NX)=CFEOH(L,NY,NX)/56.0_r8
-          CCACO(L,NY,NX)=CCACO(L,NY,NX)/40.0_r8
-          CCASO(L,NY,NX)=CCASO(L,NY,NX)/40.0_r8
+          CNH4_vr(L,NY,NX)=CNH4_vr(L,NY,NX)/natomw
+          CNO3_vr(L,NY,NX)=CNO3_vr(L,NY,NX)/natomw
+          CPO4_vr(L,NY,NX)=CPO4_vr(L,NY,NX)/patomw
+          CAL_vr(L,NY,NX)=CAL_vr(L,NY,NX)/27.0_r8
+          CFE_vr(L,NY,NX)=CFE_vr(L,NY,NX)/56.0_r8
+          CCA_vr(L,NY,NX)=CCA_vr(L,NY,NX)/40.0_r8
+          CMG_vr(L,NY,NX)=CMG_vr(L,NY,NX)/24.3_r8
+          CNA_vr(L,NY,NX)=CNA_vr(L,NY,NX)/23.0_r8
+          CKA_vr(L,NY,NX)=CKA_vr(L,NY,NX)/39.1_r8
+          CSO4_vr(L,NY,NX)=CSO4_vr(L,NY,NX)/32.0_r8
+          CCL_vr(L,NY,NX)=CCL_vr(L,NY,NX)/35.5_r8
+          CALPO_vr(L,NY,NX)=CALPO_vr(L,NY,NX)/patomw
+          CFEPO_vr(L,NY,NX)=CFEPO_vr(L,NY,NX)/patomw
+          CCAPD_vr(L,NY,NX)=CCAPD_vr(L,NY,NX)/patomw
+          CCAPH_vr(L,NY,NX)=CCAPH_vr(L,NY,NX)/(patomw*3.0_r8)
+          CALOH_vr(L,NY,NX)=CALOH_vr(L,NY,NX)/27.0_r8
+          CFEOH_vr(L,NY,NX)=CFEOH_vr(L,NY,NX)/56.0_r8
+          CCACO_vr(L,NY,NX)=CCACO_vr(L,NY,NX)/40.0_r8
+          CCASO_vr(L,NY,NX)=CCASO_vr(L,NY,NX)/40.0_r8
   !
   !     ESTIMATE SON,SOP,CEC IF UNKNOWN
   !     BIOCHEMISTRY 130:117-131
@@ -761,8 +767,8 @@ module readiMod
           IF(CEC_vr(L,NY,NX).LT.0.0_r8)THEN
             !estimate from input data
             CEC_vr(L,NY,NX)=10.0_r8*(200.0_r8*2.0_r8*CSoilOrgM_vr(ielmc,L,NY,NX)/1.0E+06_r8 &
-              +80.0_r8*CCLAY(L,NY,NX)+20.0_r8*CSILT(L,NY,NX) &
-              +5.0_r8*CSAND(L,NY,NX))
+              +80.0_r8*CCLAY_vr(L,NY,NX)+20.0_r8*CSILT(L,NY,NX) &
+              +5.0_r8*CSAND_vr(L,NY,NX))
           ENDIF
         ENDDO
         CSoilOrgM_vr(ielmc,0,NY,NX)=orgcden
@@ -770,6 +776,8 @@ module readiMod
       ENDDO
     ENDDO
   ENDDO
+  write(*,*)'ieadTo',RSC(1:micpar%NumOfLitrCmplxs,0,1,1)
+
   end associate
   end subroutine readTopoNC
 
@@ -802,7 +810,7 @@ module readiMod
   write(*,*)'Water potential at wilting point (MPa)',PSIAtWiltPoint(NY,NX)
   write(*,*)'Wet soil albedo',SoilAlbedo_col(NY,NX)
 
-  write(*,*)'Litter pH',PH(0,NY,NX)
+  write(*,*)'Litter pH',PH_vr(0,NY,NX)
   write(*,*)'C in surface fine litter (g m-2)',RSC(k_fine_litr,0,NY,NX)
   write(*,*)'N in surface fine litter (g m-2)',RSN(k_fine_litr,0,NY,NX)
   write(*,*)'P in surface fine litter (g m-2)',RSP(k_fine_litr,0,NY,NX)
@@ -812,7 +820,7 @@ module readiMod
   write(*,*)'C in surface manure litter (g m-2)',RSC(k_manure,0,NY,NX)
   write(*,*)'N in surface manure litter (g m-2)',RSN(k_manure,0,NY,NX)
   write(*,*)'P in surface manure litter (g m-2)',RSP(k_manure,0,NY,NX)
-  write(*,*)'surface litter type:1=plant,2=manure',IXTYP(1,NY,NX),IXTYP(2,NY,NX)
+  write(*,*)'surface litter type:1=plant,2=manure',iLitrType_col(1,NY,NX),iLitrType_col(2,NY,NX)
   write(*,*)'layer number of soil surface layer NUI',NUI(NY,NX)
   write(*,*)'layer number of maximum rooting layer NJ',MaxNumRootLays(NY,NX)
   write(*,*)'number of layers involved in model calculation',NL(NY,NX)
@@ -821,7 +829,7 @@ module readiMod
   write(*,'(A,I2,A,I2)')'read data for layers from layer NU ',NU,' to layer NM ',NM
 
   write(*,*)'Depth to bottom of soil layer (m): CDPTH'
-  write(*,*)(CumDepz2LayerBot_vr(L,NY,NX),L=NU,NM)
+  write(*,*)(CumDepz2LayBottom_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Initial bulk density (Mg m-3, 0=water): SoiBulkDensityt0_vr'
   write(*,*)(SoiBulkDensityt0_vr(L,NY,NX),L=NU,NM)
 !
@@ -845,13 +853,13 @@ module readiMod
 !
 !     PHYSICAL PROPERTIES
 !
-!     CSAND,CSILT=sand,silt contents (kg Mg-1)
+!     CSAND_vr,CSILT=sand,silt contents (kg Mg-1)
 !     SoilFracAsMacP_vr,ROCK=macropore,rock fraction
 !
 
   write(*,*)''
-  write(*,*)'Sand (kg Mg-1): CSAND'
-  write(*,*)(CSAND(L,NY,NX),L=NU,NM)
+  write(*,*)'Sand (kg Mg-1): CSAND_vr'
+  write(*,*)(CSAND_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Silt (kg Mg-1): CSILT'
   write(*,*)(CSILT(L,NY,NX),L=NU,NM)
   write(*,*)'Macropore fraction (0-1): FOHL'
@@ -867,7 +875,7 @@ module readiMod
 
   write(*,*)''
   write(*,*)'pH'
-  write(*,*)(PH(L,NY,NX),L=NU,NM)
+  write(*,*)(PH_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Cation exchange capacity (cmol Kg-1): CEC'
   write(*,*)(CEC_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Anion exchange capacity (cmol Kg-1): AEC'
@@ -894,11 +902,11 @@ module readiMod
 !
   write(*,*)''
   write(*,*)'Total soil NH4 concentration (gN Mg-1): CNH4 '
-  write(*,*)(CNH4(L,NY,NX),L=NU,NM)
+  write(*,*)(CNH4_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Total soil NO3 concentration (gN Mg-1): CNO3'
-  write(*,*)(CNO3(L,NY,NX),L=NU,NM)
+  write(*,*)(CNO3_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Total soil H2PO4 concentration (gP Mg-1): CPO4 '
-  write(*,*)(CPO4(L,NY,NX),L=NU,NM)
+  write(*,*)(CPO4_vr(L,NY,NX),L=NU,NM)
 !
 !     CATION AND ANION CONCENTRATIONS
 !
@@ -907,19 +915,19 @@ module readiMod
 !
   write(*,*)''
   write(*,*)'Soluble soil Al content (g Mg-1): CAL'
-  write(*,*)(CAL(L,NY,NX),L=NU,NM)
+  write(*,*)(CAL_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soluble soil Fe content (g Mg-1): CFE'
-  write(*,*)(CFE(L,NY,NX),L=NU,NM)
+  write(*,*)(CFE_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soluble soil Ca content (g Mg-1): CCA'
-  write(*,*)(CCA(L,NY,NX),L=NU,NM)
+  write(*,*)(CCA_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soluble soil Na content (g Mg-1): CNA'
-  write(*,*)(CNA(L,NY,NX),L=NU,NM)
+  write(*,*)(CNA_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soluble soil K content (g Mg-1): CKA'
-  write(*,*)(CKA(L,NY,NX),L=NU,NM)
+  write(*,*)(CKA_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soluble soil SO4 content (gS Mg-1): CSO4'
-  write(*,*)(CSO4(L,NY,NX),L=NU,NM)
+  write(*,*)(CSO4_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soluble soil Cl content (g Mg-1): CCL'
-  write(*,*)(CCL(L,NY,NX),L=NU,NM)
+  write(*,*)(CCL_vr(L,NY,NX),L=NU,NM)
 !
 !     PRECIPITATED MINERAL CONCENTRATIONS
 !
@@ -928,21 +936,21 @@ module readiMod
 !
   write(*,*)''
   write(*,*)'Soil AlPO4 content (g Mg-1): CALPO'
-  write(*,*)(CALPO(L,NY,NX),L=NU,NM)
+  write(*,*)(CALPO_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soil FePO4 content (g Mg-1): CFEPO'
-  write(*,*)(CFEPO(L,NY,NX),L=NU,NM)
+  write(*,*)(CFEPO_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soil CaHPO4 content (g Mg-1): CCAPD'
-  write(*,*)(CCAPD(L,NY,NX),L=NU,NM)
+  write(*,*)(CCAPD_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soil apatite content (g Mg-1): CCAPH '
-  write(*,*)(CCAPH(L,NY,NX),L=NU,NM)
+  write(*,*)(CCAPH_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soil Al(OH)3 content (g Mg-1): CALOH '
-  write(*,*)(CALOH(L,NY,NX),L=NU,NM)
+  write(*,*)(CALOH_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soil Fe(OH)3 content (g Mg-1): CFEOH '
-  write(*,*)(CFEOH(L,NY,NX),L=NU,NM)
+  write(*,*)(CFEOH_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soil CaCO3 content (g Mg-1): CCACO'
-  write(*,*)(CCACO(L,NY,NX),L=NU,NM)
+  write(*,*)(CCACO_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Soil CaSO4 content (g Mg-1): CCASO'
-  write(*,*)(CCASO(L,NY,NX),L=NU,NM)
+  write(*,*)(CCASO_vr(L,NY,NX),L=NU,NM)
 !
 !     GAPON SELECTIVITY CO-EFFICIENTS
 !
@@ -951,25 +959,25 @@ module readiMod
 !
   write(*,*)''
   write(*,*)'Ca-NH4 Gapon selectivity coefficient: GKC4'
-  write(*,*)(GKC4(L,NY,NX),L=NU,NM)
+  write(*,*)(GKC4_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Ca-H Gapon selectivity coefficient: GKCH'
-  write(*,*)(GKCH(L,NY,NX),L=NU,NM)
+  write(*,*)(GKCH_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Ca-Al Gapon selectivity coefficient: GKCA'
-  write(*,*)(GKCA(L,NY,NX),L=NU,NM)
+  write(*,*)(GKCA_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Ca-Mg Gapon selectivity coefficient: GKCM'
-  write(*,*)(GKCM(L,NY,NX),L=NU,NM)
+  write(*,*)(GKCM_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Ca-Na Gapon selectivity coefficient: GKCN'
-  write(*,*)(GKCN(L,NY,NX),L=NU,NM)
+  write(*,*)(GKCN_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Ca-K Gapon selectivity coefficient: GKCK'
-  write(*,*)(GKCK(L,NY,NX),L=NU,NM)
+  write(*,*)(GKCK_vr(L,NY,NX),L=NU,NM)
 
 !
 !     INITIAL WATER, ICE CONTENTS
 !
   write(*,*)'Initial soil water content (m3/m3): THW'
-  write(*,*)(THW(L,NY,NX),L=NU,NM)
+  write(*,*)(THW_vr(L,NY,NX),L=NU,NM)
   write(*,*)'Initial soil ice content (m3/m3): THI'
-  write(*,*)(THI(L,NY,NX),L=NU,NM)
+  write(*,*)(THI_vr(L,NY,NX),L=NU,NM)
 !
 !     THW,THI=initial water,ice:>1=satd,1=FC,0=WP,<0=0,0-1=m3 m-3
 !

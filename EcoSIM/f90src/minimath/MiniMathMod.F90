@@ -20,9 +20,10 @@ module minimathmod
   public :: GetMolAirPerm3
   public :: fSiLU
   public :: fixnegmass
-  public :: fixEXflux
+  public :: fixEXConsumpFlux
   public :: yearday,isletter
   public :: dssign
+  public :: flux_mass_limiter
   interface AZMAX1
     module procedure AZMAX1_s
     module procedure AZMAX1_d
@@ -103,6 +104,7 @@ module minimathmod
   real(r8), intent(in) :: tempK
 
   real(r8) :: ans  !ton, i.e. (ans*10^3=kg/m3) in terms vapor concentration, 2.173~18/8.314
+  
   ans=2.173E-03_r8/tempK*0.61_r8*EXP(5360.0_r8*(3.661E-03_r8-1.0_r8/tempK))
   end function vapsat
 
@@ -202,7 +204,11 @@ module minimathmod
 
   real(r8) :: ans
 
-  ans=AMAX1(0.0_r8,val)
+  if(val>=tiny_val)then
+    ans=val
+  else  
+    ans=0._r8
+  endif
 
   end function AZMAX1_s  
 !------------------------------------------------------------------------------------------
@@ -274,8 +280,12 @@ module minimathmod
     return     
   endif
 
-  ac=a/c;bc=b/c    
-  ans=abs((ac-bc)/(ac+bc))<tiny_val
+  if(abs(a+b)<1.e-20_r8)then
+    ans=.false.
+  else  
+    ac=a/c;bc=b/c    
+    ans=abs((ac-bc)/(ac+bc))<tiny_val
+  endif
   end function isclose
 
 ! ----------------------------------------------------------------------
@@ -342,7 +352,7 @@ module minimathmod
   end function fixnegmass
 ! ----------------------------------------------------------------------
 
-  subroutine fixEXflux(mass,consum_flux,ldebug)
+  subroutine fixEXConsumpFlux(mass,consum_flux,ldebug)
   implicit none
   real(r8), intent(inout) :: mass
   real(r8), intent(inout) :: consum_flux
@@ -358,7 +368,7 @@ module minimathmod
   else
     mass=mass-consum_flux  
   endif
-  end subroutine fixEXflux
+  end subroutine fixEXConsumpFlux
 
 ! ----------------------------------------------------------------------
 
@@ -392,6 +402,24 @@ module minimathmod
 
   end function isletter
 
+! ----------------------------------------------------------------------
 
-
+  function flux_mass_limiter(flux,massa,massb)result(ans)
+  !
+  !limit flux by massa and massb 
+  !assuming
+  !massa=massa+flux
+  !massb=massb-flux
+  implicit none
+  real(r8), intent(in) :: flux
+  real(r8), intent(in) :: massa
+  real(r8), intent(in) :: massb
+  
+  real(r8) :: ans
+  if(flux>0._r8)then
+    ans=AMIN1(flux,massb)-tiny_val
+  else 
+    ans=-AMIN1(-flux,massa)+tiny_val
+  endif
+  end function flux_mass_limiter
 end module minimathmod

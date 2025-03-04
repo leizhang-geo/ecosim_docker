@@ -120,7 +120,7 @@ contains
   this%k_manure                    = this%k_fine_litr+1;   this%is_litter(this%k_manure)   = .true.
   this%is_litter(this%k_fine_litr) = .true.
   this%is_litter(this%k_manure)    = .true.
-
+  this%is_finelitter(this%k_fine_litr)=.true.
   this%iprotein  = 1
   this%icarbhyro = 2
   this%icellulos = 3
@@ -140,10 +140,10 @@ contains
   this%cplxname(4) = 'pom'
   this%cplxname(5) = 'humus'
   this%hmicname(1) = 'aerohetrob'
-  this%hmicname(2) = 'anerofaclb'
+  this%hmicname(2) = 'faculdenit'
   this%hmicname(3) = 'aerofungi'
   this%hmicname(4) = 'aneroferm'
-  this%hmicname(5) = 'acetMicBiome_colhg'
+  this%hmicname(5) = 'acetmethg'
   this%hmicname(6) = 'aeron2fix'
   this%hmicname(7) = 'aneron2fix'
   this%amicname(1) = 'amoniaoxib'
@@ -242,6 +242,8 @@ contains
   SPOSC=reshape((/7.5_r8,7.5_r8,1.5_r8,0.5_r8,7.5_r8,7.5_r8,1.5_r8,0.5_r8 &
     ,7.5_r8,7.5_r8,1.5_r8,0.5_r8,0.05_r8,0.00_r8,0.00_r8,0.00_r8 &
     ,0.05_r8,0.0167_r8,0.00_r8,0.00_r8/),shape(sposc))
+
+  !SPOSC(:,1:this%NumOfLitrCmplxs)=SPOSC(:,1:this%NumOfLitrCmplxs)*0.5_r8
 
   CNRH=(/3.33E-02_r8,3.33E-02_r8,3.33E-02_r8,5.00E-02_r8,12.50E-02_r8/)
   CPRH=(/3.33E-03_r8,3.33E-03_r8,3.33E-03_r8,5.00E-03_r8,12.50E-03_r8/)
