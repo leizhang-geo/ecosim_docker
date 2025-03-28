@@ -108,6 +108,9 @@ RUN echo "PATH: ${PATH}"
 
 WORKDIR /usr/app/EcoSIM/EcoSIM/
 
+# copy and overwrite updated source files
+RUN /bin/cp -rf ../src_update/* ./
+
 # Build and install EcoSIM
 RUN bash ./build_EcoSIM.sh
 
