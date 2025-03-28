@@ -1,8 +1,0 @@
-add_subdirectory(ecosim)
-add_subdirectory(mockbatch)
-add_subdirectory(boxshared)
-add_subdirectory(aquachem)
-add_subdirectory(boxsbgc)
-add_subdirectory(plantbgc)
-add_subdirectory(tools)
-add_subdirectory(ATSEcoSIM)
