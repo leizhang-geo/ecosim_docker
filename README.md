@@ -1,4 +1,13 @@
-# EcoSIM installation
+# EcoSIM
+
+EcoSIM is a biogeochemical modelling library spins off the ecosys model.
+
+It is an hourly time-step land model with multiple canopy and soil layers and fully coupled energy, water, plant-microbe-soil, carbon and nutrient cycles.
+
+This repository contains the code used for building EcoSIM in a docker environment, letting us run ecosystem model successfully and easily.
+
+
+# Installation
 
 ## Configure and install 3rd-party libraries
 
