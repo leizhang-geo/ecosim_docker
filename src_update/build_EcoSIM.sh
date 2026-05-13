@@ -1,4 +1,3 @@
-#!/bin/bash
 
 # ############################################################################ #
 #
@@ -8,7 +7,7 @@
 
 # A couple of helper functions:
 
-function status_message()
+status_message()
 {
   #Printing status messages in a nice format
   local GREEN='32m'
@@ -20,7 +19,7 @@ function status_message()
 }
 
 ############# EDIT THESE! ##################
-
+parallel_jobs=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1)
 debug=0
 mpi=0
 shared=0
@@ -46,6 +45,7 @@ print_help() {
     echo "  FC=<compiler>          Set Fortran compiler"
     echo "  --regression_test      Enable regression test"
     echo "  --debug                Enable debug mode"
+    echo "  -j, --jobs=<n>         Number of parallel build jobs (default: all cores)"    
     echo "  --mpi                  Enable MPI"
     echo "  --shared               Enable shared libraries"
     echo "  --verbose              Enable verbose output"
@@ -90,9 +90,13 @@ do
     --sanitize)
       sanitize=1
       ;; 
+    -j=*|--jobs=*)
+      parallel_jobs="${arg#*=}"
+      ;;      
     --clean)
       echo "Cleaning build directory..."
       rm -rf ./build
+      rm -rf ./local
       exit 0
       ;;
   esac
@@ -226,7 +230,7 @@ if [ $? -ne 0 ]; then
 fi
 
 #This does the build
-make -j ${parallel_jobs}
+cmake --build . -j "${parallel_jobs}"
 
 if [ $? -ne 0 ]; then
   echo "Build failed, aborting."
