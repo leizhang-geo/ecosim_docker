@@ -8,7 +8,7 @@
 - `git submodule deinit -f -- ./EcoSIM`
 - `git rm -f ./EcoSIM`
 - `rm -rf .git/modules/EcoSIM`
-- `git submodule add --force -b dev-leizhang https://github.com/leizhang-geo/EcoSIM.git EcoSIM`
+- `git submodule add --force -b dev-leizhang git@github.com:leizhang-geo/EcoSIM.git EcoSIM`
 - `git add -A; git commit; git push origin`
 
 5. Update the code files in folder `src_update`:
@@ -41,7 +41,7 @@ set(TPL_INSTALL_PREFIX $ENV{NETCDF_DIR})
 
 2. Clone your own fork to your machine.
 
-3. Add the original repo as upstream: `git remote add upstream https://github.com/leizhang-geo/<repo_name>.git`
+3. Add the original repo as upstream: `git remote add upstream git@github.com:leizhang-geo/<repo_name>.git`
 
 4. Create your branch for develop, make your changes, test, and commit
 
@@ -53,3 +53,10 @@ set(TPL_INSTALL_PREFIX $ENV{NETCDF_DIR})
 - `git checkout <branch_name>`
 - `git pull upstream <branch_name>`
 - `git push origin <branch_name>`
+
+
+# Docker useage
+
+- Recursively clone a repo: git clone --recursive git@github.com:leizhang-geo/ecosim_docker.git
+
+- Rename an image: `docker tag [image_name_old]:[tag_old] [image_name_new]:[tag_new]` -> `docker rmi [image_name_old]:[tag_old]`
