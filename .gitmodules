@@ -1,4 +1,0 @@
-[submodule "EcoSIM"]
-	path = EcoSIM
-	url = git@github.com:leizhang-geo/EcoSIM.git
-	branch = dev-leizhang
