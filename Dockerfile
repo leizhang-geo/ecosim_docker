@@ -6,7 +6,14 @@ RUN apt-get install -y build-essential
 RUN apt-get install -y gfortran
 RUN apt-get install -y g++
 RUN apt-get install -y make
-RUN apt-get install -y cmake
+
+# RUN apt-get install -y cmake
+RUN apt-get update && apt-get install -y wget && \
+    ARCH=$(uname -m) && \
+    wget -qO- "https://github.com/Kitware/CMake/releases/download/v3.27.9/cmake-3.27.9-linux-${ARCH}.tar.gz" \
+        | tar --strip-components=1 -xz -C /usr/local && \
+    cmake --version
+
 RUN apt-get install -y gdb
 RUN apt-get install -y libtool
 RUN apt-get install -y vim
