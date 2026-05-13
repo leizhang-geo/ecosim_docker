@@ -36,7 +36,7 @@ systype=""
 systype="Linux"
 precision="double"
 shared=1
-### LZ code edit END   ###
+### LZ code edit END   ###
 
 print_help() {
     echo "Usage: $0 [OPTIONS]"
