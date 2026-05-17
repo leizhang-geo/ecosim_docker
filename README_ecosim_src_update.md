@@ -47,9 +47,11 @@ set(TPL_INSTALL_PREFIX $ENV{NETCDF_DIR})
 
 3. Add the original repo as upstream: `git remote add upstream git@github.com:leizhang-geo/<repo_name>.git`
 
-4. Create your branch for develop, make your changes, test, and commit
+4. Create your branch for develop: `git checkout -b dev-leizhang`
 
-5. When you are done, push to your own fork (not to the original repo): `git push origin <dev branch name>`
+5. Make your changes, test, and commit
+
+6. When you are done, push to your own fork (not to the original repo): `git push origin dev-leizhang`
 
 6. Go to your fork on GitHub, and GitHub will show a button like: "Compare & pull request". Click it and submit your pull request to the original repo.
 
