@@ -118,6 +118,7 @@ WORKDIR /usr/app/EcoSIM/EcoSIM/
 RUN /bin/cp -rf ../src_update/* ./
 
 # Build and install EcoSIM
+RUN sed -i 's/\r$//' ./build_EcoSIM.sh
 RUN bash ./build_EcoSIM.sh
 
 # Copy all runtime files to /usr/local/
