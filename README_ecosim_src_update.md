@@ -2,7 +2,11 @@
 
 1. Go to the forked [EcoSIM](https://github.com/leizhang-geo/EcoSIM.git) GitHub website (on my github page), click "Sync fork" for branch 'main' and 'dev-leizhang'.
 
-2. Go to [ecosim_docker](https://github.com/leizhang-geo/ecosim_docker.git) GitHub repository (on local machine), sync fork of EcoSIM source code.
+2. Go to [ecosim_docker](https://github.com/leizhang-geo/ecosim_docker.git) GitHub repository (on local machine), sync fork of EcoSIM source code (submodule).
+- `cd ./EcoSIM`
+- `git pull origin dev-leizhang`
+- `cd ..`
+- `git add -A; git commit; git push origin`
 
 3. If there is a conflict and sync EcoSIM src cannot be performed (i.e., if above step 2 does not work), we can totally remove folder 'EcoSIM'. We may need to completely remove submodule info by following steps:
 - `git submodule deinit -f -- ./EcoSIM`
@@ -11,7 +15,7 @@
 - `git submodule add --force -b dev-leizhang git@github.com:leizhang-geo/EcoSIM.git EcoSIM`
 - `git add -A; git commit; git push origin`
 
-5. Update the code files in folder `src_update`:
+4. Update the code files in folder `src_update`:
 
 - In build_EcoSIM.sh (location: before the code of `print_help()`):
 ```bash
