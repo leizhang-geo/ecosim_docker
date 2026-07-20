@@ -117,7 +117,12 @@ WORKDIR /usr/app/EcoSIM/EcoSIM/
 # copy and overwrite updated source files
 RUN /bin/cp -rf ../src_update/* ./
 
-RUN sed -Ei "s/(default[[:space:]]*=[[:space:]]*')inactive(')/\1active\2/g" ./f90src/IOutils/HistDataType.F90
+# set all output variables to be 'active'
+# RUN sed -Ei "s/(default[[:space:]]*=[[:space:]]*')inactive(')/\1active\2/g" ./f90src/IOutils/HistDataType.F90
+RUN sed -Ei \
+    "/fname[[:space:]]*=[[:space:]]*['\"][^'\"]*(_col|_pft|_vr|_pvr)['\"]/,/default[[:space:]]*=/ \
+     s/(default[[:space:]]*=[[:space:]]*['\"])inactive(['\"])/\1active\2/" \
+    ./f90src/IOutils/HistDataType.F90
 
 # Build and install EcoSIM
 RUN sed -i 's/\r$//' ./build_EcoSIM.sh
