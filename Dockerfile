@@ -117,6 +117,8 @@ WORKDIR /usr/app/EcoSIM/EcoSIM/
 # copy and overwrite updated source files
 RUN /bin/cp -rf ../src_update/* ./
 
+RUN sed -Ei "s/(default[[:space:]]*=[[:space:]]*')inactive(')/\1active\2/g" ./f90src/IOutils/HistDataType.F90
+
 # Build and install EcoSIM
 RUN sed -i 's/\r$//' ./build_EcoSIM.sh
 RUN bash ./build_EcoSIM.sh
