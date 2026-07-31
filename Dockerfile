@@ -120,7 +120,7 @@ RUN /bin/cp -rf ../src_update/* ./
 # set all output variables to be 'active'
 # RUN sed -Ei "s/(default[[:space:]]*=[[:space:]]*')inactive(')/\1active\2/g" ./f90src/IOutils/HistDataType.F90
 RUN sed -Ei \
-    "/fname[[:space:]]*=[[:space:]]*['\"][^'\"]*(_col|_pft|_vr|_pvr)['\"]/,/default[[:space:]]*=/ \
+    "/fname[[:space:]]*=[[:space:]]*['\"][^'\"]*(_col|_pft|_vr)['\"]/,/default[[:space:]]*=/ \
      s/(default[[:space:]]*=[[:space:]]*['\"])inactive(['\"])/\1active\2/" \
     ./f90src/IOutils/HistDataType.F90
 
